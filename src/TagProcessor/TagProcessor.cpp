@@ -2,9 +2,8 @@
 
 #include "TagProcessor.h"
 
-#include "../GetImage/GetImage.h"
-#include "../SendResult/SendResult.h"
-#include "../AprilTagData/AprilTagData.h"
+#include <utility>
+
 
 namespace OwlTagProcessor {
 
@@ -30,18 +29,58 @@ namespace OwlTagProcessor {
         }
 
         // TODO do task
-//        ptr_GetImage_->get();
-
-        // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
-        // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
-        timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
-
-        timer_->async_wait(
+        ptr_GetImage_->timeoutMs = ptr_TagConfigLoader_->config.configGetImage.timeoutMs;
+        ptr_GetImage_->get(
+                ptr_TagConfigLoader_->config.configGetImage.host,
+                ptr_TagConfigLoader_->config.configGetImage.port,
+                ptr_TagConfigLoader_->config.configGetImage.target,
+                ptr_TagConfigLoader_->config.configGetImage.version,
                 [this, self = shared_from_this()]
-                        (const boost::system::error_code &ec) {
-                    time_loop(ec);
+                        (boost::beast::error_code ec, bool ok, cv::Mat img) {
+                    if (ec) {
+                        // TODO check stop or skip
+                        return;
+                    }
+                    if (!ok) {
+                        // TODO skip
+                        return;
+                    }
+
+                    auto r = ptr_AprilTagData_->analysis(std::move(img));
+                    auto o = AprilTagDataObject2Map(r);
+
+                    ptr_SendResult_->timeoutMs = ptr_TagConfigLoader_->config.configSendResult.timeoutMs;
+                    ptr_SendResult_->send(
+                            ptr_TagConfigLoader_->config.configSendResult.host,
+                            ptr_TagConfigLoader_->config.configSendResult.port,
+                            ptr_TagConfigLoader_->config.configSendResult.target,
+                            ptr_TagConfigLoader_->config.configSendResult.version,
+                            o,
+                            [this, self = shared_from_this()]
+                                    (boost::beast::error_code ec, bool ok) {
+                                if (ec) {
+                                    // TODO check stop or skip
+                                    return;
+                                }
+                                if (!ok) {
+                                    // TODO skip
+                                    return;
+                                }
+                                // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
+                                // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
+                                timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
+
+                                timer_->async_wait(
+                                        [this, self = shared_from_this()]
+                                                (const boost::system::error_code &ec) {
+                                            time_loop(ec);
+                                        }
+                                );
+                            }
+                    );
                 }
         );
+
     }
 
 } // OwlTagProcessor

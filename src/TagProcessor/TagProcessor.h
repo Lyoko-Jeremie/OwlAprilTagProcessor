@@ -8,38 +8,39 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
+#include "../ConfigLoader/TagConfigLoader.h"
+
+#include "../GetImage/GetImage.h"
+#include "../SendResult/SendResult.h"
+#include "../AprilTagData/AprilTagData.h"
+
 namespace OwlTagProcessor {
-
-    class GetImage;
-
-    class SendResult;
-
-    class AprilTagData;
 
     class TagProcessor : public std::enable_shared_from_this<TagProcessor> {
     public:
         TagProcessor(
                 boost::asio::io_context &ioc,
-                std::shared_ptr<GetImage> ptr_GetImage,
-                std::shared_ptr<SendResult> ptr_SendResult,
-                std::shared_ptr<AprilTagData> ptr_AprilTagData,
-                long timeStartMs = 1000,
-                long timeDurationMs = 300
+                std::shared_ptr<OwlGetImage::GetImage> ptr_GetImage,
+                std::shared_ptr<OwlSendResult::SendResult> ptr_SendResult,
+                std::shared_ptr<OwlAprilTagData::AprilTagData> ptr_AprilTagData,
+                std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> TagConfigLoader
         ) : ioc_(ioc),
             ptr_GetImage_(std::move(ptr_GetImage)),
             ptr_SendResult_(std::move(ptr_SendResult)),
             ptr_AprilTagData_(std::move(ptr_AprilTagData)),
-            timeStartMs_(timeStartMs),
-            timeDurationMs_(timeDurationMs) {
-
+            ptr_TagConfigLoader_(std::move(TagConfigLoader)),
+            timeStartMs_(ptr_TagConfigLoader_->config.timeStartMs),
+            timeDurationMs_(ptr_TagConfigLoader_->config.timeDurationMs) {
         }
 
     private:
         boost::asio::io_context &ioc_;
 
-        std::shared_ptr<GetImage> ptr_GetImage_;
-        std::shared_ptr<SendResult> ptr_SendResult_;
-        std::shared_ptr<AprilTagData> ptr_AprilTagData_;
+        std::shared_ptr<OwlGetImage::GetImage> ptr_GetImage_;
+        std::shared_ptr<OwlSendResult::SendResult> ptr_SendResult_;
+        std::shared_ptr<OwlAprilTagData::AprilTagData> ptr_AprilTagData_;
+
+        std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> ptr_TagConfigLoader_;
 
         long timeStartMs_ = 1000;
         long timeDurationMs_ = 300;
