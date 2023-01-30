@@ -78,7 +78,7 @@ find_package(Boost 1.81.0 REQUIRED COMPONENTS system filesystem program_options 
 if (OpenCV_WORLD)
     find_package(OpenCV REQUIRED world)
 else (OpenCV_WORLD)
-    find_package(OpenCV REQUIRED core)
+    find_package(OpenCV REQUIRED core imgcodecs)
 endif (OpenCV_WORLD)
 
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
@@ -86,6 +86,7 @@ message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 message(STATUS "OpenCV_LIBRARY_DIRS: ${OpenCV_LIBRARY_DIRS}")
 message(STATUS "OpenCV_LIBRARIES: ${OpenCV_LIBRARIES}")
+message(STATUS "OpenCV_LIBS: ${OpenCV_LIBS}")
 message(STATUS "OpenCV_VERSION: ${OpenCV_VERSION}")
 message(STATUS "OpenCV ARCH: ${OpenCV_ARCH}")
 message(STATUS "OpenCV RUNTIME: ${OpenCV_RUNTIME}")
@@ -103,17 +104,20 @@ message(STATUS "CMAKE_THREAD_LIBS_INIT: ${CMAKE_THREAD_LIBS_INIT}")
 
 add_executable(${ProjectMainName}
         src/main.cpp
-#        src/AprilTagData.cpp
-#        src/AprilTagData.h
+        #        src/AprilTagData.cpp
+        #        src/AprilTagData.h
         src/OwlLog.cpp
         src/OwlLog.h
-#        src/3thlib/cpp-httplib/httplib.h
-        )
+        #        src/3thlib/cpp-httplib/httplib.h
+        src/GetImage.cpp
+        src/GetImage.h
+        src/SendResult.cpp
+        src/SendResult.h)
 
 target_link_libraries(${ProjectMainName} ${CMAKE_THREAD_LIBS_INIT})
 
-include_directories(${Boost_INCLUDE_DIRS} ${AprilTag_INCLUDE_DIRS} ${OpenCV_LIBRARIES})
-target_link_libraries(${ProjectMainName} ${Boost_LIBRARIES} ${OpenCV_LIBRARIES} ${AprilTag_LIB})
+include_directories(${Boost_INCLUDE_DIRS} ${AprilTag_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(${ProjectMainName} ${Boost_LIBRARIES} ${AprilTag_LIB} ${OpenCV_LIBRARIES})
 link_directories(${Boost_LIBRARY_DIRS})
 
 

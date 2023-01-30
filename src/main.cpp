@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "OwlLog.h"
 
@@ -9,6 +10,8 @@
 #include <boost/asio/signal_set.hpp>
 #include <boost/thread.hpp>
 #include <boost/beast.hpp>
+
+#include "GetImage.h"
 
 struct ThreadCallee {
     boost::asio::io_context &ioc;
@@ -69,61 +72,64 @@ int main() {
 //    }
 
 
+    boost::asio::io_context ioc;
+    auto ppp = std::make_shared<OwlGetImage::GetImage>(ioc);
 
     std::string host{"bing.com"};
     std::string port{"80"};
     std::string target{""};
     int version = 11;
 
+    ppp->test(host, port, target, version);
 
-    // The io_context is required for all I/O
-    boost::asio::io_context ioc;
-
-    // These objects perform our I/O
-    boost::asio::ip::tcp::resolver resolver(ioc);
-    boost::beast::tcp_stream stream(ioc);
-
-    // Look up the domain name
-    boost::beast::error_code ec1;
-    auto const results = resolver.resolve(host, port, ec1);
-    if (ec1) {
-        throw boost::beast::system_error{ec1};
-    }
-
-
-    // Make the connection on the IP address we get from a lookup
-    stream.connect(results);
-
-    // Set up an HTTP GET request message
-    boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, target, version};
-    req.set(boost::beast::http::field::host, host);
-    req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-    // Send the HTTP request to the remote host
-    boost::beast::http::write(stream, req);
-
-    // This buffer is used for reading and must be persisted
-    boost::beast::flat_buffer buffer;
-
-    // Declare a container to hold the response
-    boost::beast::http::response<boost::beast::http::dynamic_body> res;
-
-    // Receive the HTTP response
-    boost::beast::http::read(stream, buffer, res);
-
-    // Write the message to standard out
-    std::cout << res << std::endl;
-
-    // Gracefully close the socket
-    boost::beast::error_code ec;
-    stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-
-    // not_connected happens sometimes
-    // so don't bother reporting it.
-    //
-    if (ec && ec != boost::beast::errc::not_connected) {
-        throw boost::beast::system_error{ec};
-    }
+//    // The io_context is required for all I/O
+//    boost::asio::io_context ioc;
+//
+//    // These objects perform our I/O
+//    boost::asio::ip::tcp::resolver resolver(ioc);
+//    boost::beast::tcp_stream stream(ioc);
+//
+//    // Look up the domain name
+//    boost::beast::error_code ec1;
+//    auto const results = resolver.resolve(host, port, ec1);
+//    if (ec1) {
+//        throw boost::beast::system_error{ec1};
+//    }
+//
+//
+//    // Make the connection on the IP address we get from a lookup
+//    stream.connect(results);
+//
+//    // Set up an HTTP GET request message
+//    boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, target, version};
+//    req.set(boost::beast::http::field::host, host);
+//    req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+//
+//    // Send the HTTP request to the remote host
+//    boost::beast::http::write(stream, req);
+//
+//    // This buffer is used for reading and must be persisted
+//    boost::beast::flat_buffer buffer;
+//
+//    // Declare a container to hold the response
+//    boost::beast::http::response<boost::beast::http::dynamic_body> res;
+//
+//    // Receive the HTTP response
+//    boost::beast::http::read(stream, buffer, res);
+//
+//    // Write the message to standard out
+//    std::cout << res << std::endl;
+//
+//    // Gracefully close the socket
+//    boost::beast::error_code ec;
+//    stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+//
+//    // not_connected happens sometimes
+//    // so don't bother reporting it.
+//    //
+//    if (ec && ec != boost::beast::errc::not_connected) {
+//        throw boost::beast::system_error{ec};
+//    }
 
 
     boost::asio::io_context ioc_keyboard;
@@ -145,6 +151,7 @@ int main() {
 //                ioc_imageWeb.stop();
 //                ioc_cameraReader.stop();
 //                ioc_web_static.stop();
+                ioc.stop();
                 ioc_keyboard.stop();
             }
                 break;
@@ -163,6 +170,7 @@ int main() {
 //    tg.create_thread(ThreadCallee{ioc_cameraReader, tg, "ioc_cameraReader 1"});
 //    tg.create_thread(ThreadCallee{ioc_cameraReader, tg, "ioc_cameraReader 2"});
 //    tg.create_thread(ThreadCallee{ioc_web_static, tg, "ioc_web_static"});
+    tg.create_thread(ThreadCallee{ioc, tg, "ioc_ioc"});
     tg.create_thread(ThreadCallee{ioc_keyboard, tg, "ioc_keyboard"});
 
 
