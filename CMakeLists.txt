@@ -97,7 +97,13 @@ message(STATUS "Boost_VERSION: ${Boost_VERSION}")
 
 message(STATUS "CMAKE_THREAD_LIBS_INIT: ${CMAKE_THREAD_LIBS_INIT}")
 
-add_executable(${ProjectMainName} src/main.cpp src/AprilTagData.cpp src/AprilTagData.h)
+add_executable(${ProjectMainName}
+        src/main.cpp
+        src/AprilTagData.cpp
+        src/AprilTagData.h
+        src/OwlLog.cpp
+        src/OwlLog.h
+        )
 
 target_link_libraries(${ProjectMainName} ${CMAKE_THREAD_LIBS_INIT})
 
