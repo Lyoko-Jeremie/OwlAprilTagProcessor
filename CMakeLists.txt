@@ -114,7 +114,9 @@ add_executable(${ProjectMainName}
         src/SendResult/SendResult.cpp
         src/SendResult/SendResult.h
         src/TagProcessor/TagProcessor.cpp
-        src/TagProcessor/TagProcessor.h)
+        src/TagProcessor/TagProcessor.h
+        src/ConfigLoader/TagConfigLoader.cpp
+        src/ConfigLoader/TagConfigLoader.h)
 
 target_link_libraries(${ProjectMainName} ${CMAKE_THREAD_LIBS_INIT})
 
