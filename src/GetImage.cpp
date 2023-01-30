@@ -93,7 +93,7 @@ namespace OwlGetImage {
                 return fail(ec, "connect");
 
             // Set a timeout on the operation
-            stream_.expires_after(std::chrono::seconds(30));
+            stream_.expires_after(std::chrono::seconds(timeoutMs_));
 
             // Send the HTTP request to the remote host
             boost::beast::http::async_write(stream_, req_,
@@ -189,7 +189,7 @@ namespace OwlGetImage {
                   CallbackFunctionType &&callback) {
         auto p = std::make_shared<GetImageSession>(ioc_, std::move(callback));
         p->run(host, port, target, version);
-        return std::move(p);
+        return p;
     }
 
 } // OwlGetImage
