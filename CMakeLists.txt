@@ -104,8 +104,8 @@ message(STATUS "CMAKE_THREAD_LIBS_INIT: ${CMAKE_THREAD_LIBS_INIT}")
 
 add_executable(${ProjectMainName}
         src/main.cpp
-        #        src/AprilTagData.cpp
-        #        src/AprilTagData.h
+        src/AprilTagData.cpp
+        src/AprilTagData.h
         src/OwlLog/OwlLog.cpp
         src/OwlLog/OwlLog.h
         #        src/3thlib/cpp-httplib/httplib.h
