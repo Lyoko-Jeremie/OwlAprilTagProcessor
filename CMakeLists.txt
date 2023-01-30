@@ -106,13 +106,13 @@ add_executable(${ProjectMainName}
         src/main.cpp
         #        src/AprilTagData.cpp
         #        src/AprilTagData.h
-        src/OwlLog.cpp
-        src/OwlLog.h
+        src/OwlLog/OwlLog.cpp
+        src/OwlLog/OwlLog.h
         #        src/3thlib/cpp-httplib/httplib.h
-        src/GetImage.cpp
-        src/GetImage.h
-        src/SendResult.cpp
-        src/SendResult.h)
+        src/GetImage/GetImage.cpp
+        src/GetImage/GetImage.h
+        src/SendResult/SendResult.cpp
+        src/SendResult/SendResult.h)
 
 target_link_libraries(${ProjectMainName} ${CMAKE_THREAD_LIBS_INIT})
 

@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 
-#include "OwlLog.h"
+#include "OwlLog/OwlLog.h"
 
 //#include "3thlib/cpp-httplib/httplib.h"
 
@@ -11,7 +11,7 @@
 #include <boost/thread.hpp>
 #include <boost/beast.hpp>
 
-#include "GetImage.h"
+#include "GetImage/GetImage.h"
 
 struct ThreadCallee {
     boost::asio::io_context &ioc;
