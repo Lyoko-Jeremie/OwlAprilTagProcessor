@@ -53,26 +53,6 @@ namespace OwlAprilTagData {
                         << " hamming " << det->hamming
                         << " decision_margin " << det->decision_margin;
 
-                {
-                    // TODO this is debug
-                    if (whenEnd) {
-                        whenEnd();
-                    }
-                }
-                return;
-                // TODO calc tag pos here
-                {
-                    auto m = std::make_shared<OwlMailDefine::Cmd2Serial>();
-                    m->callbackRunner = [whenEnd](OwlMailDefine::MailSerial2Cmd data) {
-                        boost::ignore_unused(data);
-                        // TODO
-                        if (whenEnd) {
-                            whenEnd();
-                        }
-                    };
-                    sendMailCmd(std::move(m));
-                }
-
             }
         }
 
