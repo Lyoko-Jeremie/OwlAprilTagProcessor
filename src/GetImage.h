@@ -14,7 +14,7 @@
 
 namespace OwlGetImage {
 
-    class session;
+    class GetImageSession;
 
     using CallbackFunctionType = std::function<void(boost::beast::error_code ec, bool ok, cv::Mat img)>;
 
@@ -33,7 +33,7 @@ namespace OwlGetImage {
                 const std::string &target,
                 int version);
 
-        std::shared_ptr<session> get(
+        std::shared_ptr<GetImageSession> get(
                 const std::string &host,
                 const std::string &port,
                 const std::string &target,

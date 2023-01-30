@@ -10,7 +10,7 @@ namespace OwlGetImage {
 
 
     // Performs an HTTP GET and prints the response
-    class session : public std::enable_shared_from_this<session> {
+    class GetImageSession : public std::enable_shared_from_this<GetImageSession> {
         boost::asio::ip::tcp::resolver resolver_;
         boost::beast::tcp_stream stream_;
         // ( buffer_ Must persist between reads)
@@ -27,9 +27,9 @@ namespace OwlGetImage {
         // Objects are constructed with a strand to
         // ensure that handlers do not execute concurrently.
         explicit
-        session(boost::asio::io_context &ioc,
-                CallbackFunctionType &&callback,
-                long timeoutMs = 30 * 1000)
+        GetImageSession(boost::asio::io_context &ioc,
+                        CallbackFunctionType &&callback,
+                        long timeoutMs = 30 * 1000)
                 : resolver_(boost::asio::make_strand(ioc)),
                   stream_(boost::asio::make_strand(ioc)),
                   callback_(callback),
@@ -55,7 +55,7 @@ namespace OwlGetImage {
                     host,
                     port,
                     boost::beast::bind_front_handler(
-                            &session::on_resolve,
+                            &GetImageSession::on_resolve,
                             shared_from_this()));
         }
 
@@ -83,7 +83,7 @@ namespace OwlGetImage {
             stream_.async_connect(
                     results,
                     boost::beast::bind_front_handler(
-                            &session::on_connect,
+                            &GetImageSession::on_connect,
                             shared_from_this()));
         }
 
@@ -98,7 +98,7 @@ namespace OwlGetImage {
             // Send the HTTP request to the remote host
             boost::beast::http::async_write(stream_, req_,
                                             boost::beast::bind_front_handler(
-                                                    &session::on_write,
+                                                    &GetImageSession::on_write,
                                                     shared_from_this()));
         }
 
@@ -114,7 +114,7 @@ namespace OwlGetImage {
             // Receive the HTTP response
             boost::beast::http::async_read(stream_, buffer_, res_,
                                            boost::beast::bind_front_handler(
-                                                   &session::on_read,
+                                                   &GetImageSession::on_read,
                                                    shared_from_this()));
         }
 
@@ -177,17 +177,17 @@ namespace OwlGetImage {
     };
 
     void GetImage::test(const std::string &host, const std::string &port, const std::string &target, int version) {
-        std::make_shared<session>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {})
+        std::make_shared<GetImageSession>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {})
                 ->run(host, port, target, version);
     }
 
-    std::shared_ptr<session>
+    std::shared_ptr<GetImageSession>
     GetImage::get(const std::string &host,
                   const std::string &port,
                   const std::string &target,
                   int version,
                   CallbackFunctionType &&callback) {
-        auto p = std::make_shared<session>(ioc_, std::move(callback));
+        auto p = std::make_shared<GetImageSession>(ioc_, std::move(callback));
         p->run(host, port, target, version);
         return std::move(p);
     }
