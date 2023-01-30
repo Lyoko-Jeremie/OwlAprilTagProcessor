@@ -9,7 +9,10 @@
 namespace OwlAprilTagData {
 
     struct AprilTagDataImpl;
-    class AprilTagData {
+
+    class AprilTagData : public std::enable_shared_from_this<AprilTagData> {
+    public:
+        AprilTagData() = default;
 
     private:
         std::shared_ptr<AprilTagDataImpl> impl{};
