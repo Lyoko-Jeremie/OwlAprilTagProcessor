@@ -39,6 +39,14 @@ if (DEFAULT_CONFIG)
     set(AprilTag_INCLUDE_DIRS h:/Code/apriltag-build-install/include/apriltag)
     set(AprilTag_LIB h:/Code/apriltag-build-install/lib/libapriltag.a)
 
+
+    # config with
+    # -DDEFAULT_CONFIG=OFF
+    # -DBOOST_ROOT=/home/jeremie/Code/boost_1_81_0-build/
+    # -DUSE_DYNAMIC_BOOST=OFF
+    # -DAprilTag_LIB=/home/jeremie/Code/apriltag-install/lib/libapriltag.a
+    # -DAprilTag_INCLUDE_DIRS=/home/jeremie/Code/apriltag-install/include/apriltag/
+
     # ===================== ^^^^^^ config segment ^^^^^^ =================================
 endif (DEFAULT_CONFIG)
 
