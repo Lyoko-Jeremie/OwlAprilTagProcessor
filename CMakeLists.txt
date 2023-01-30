@@ -55,11 +55,11 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-Wall -Wextra -O1 -g)
 endif ()
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+#set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(BOOST_THEAD_MODULE "thread")
-add_definitions(-DUSE_BOOST_THEAD)
+#set(BOOST_THEAD_MODULE "thread")
+#add_definitions(-DUSE_BOOST_THEAD)
 
 if (USE_DYNAMIC_BOOST)
     message(STATUS "USE DYNAMIC BOOST !!!")
@@ -70,7 +70,8 @@ else (USE_DYNAMIC_BOOST)
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif (USE_DYNAMIC_BOOST)
 
-set(Boost_USE_MULTITHREADED ON)
+#set(Boost_USE_MULTITHREADED ON)
+
 #find_package(Boost REQUIRED COMPONENTS  REQUIRED)
 find_package(Boost 1.81.0 REQUIRED COMPONENTS system filesystem program_options json log ${BOOST_THEAD_MODULE} REQUIRED)
 
@@ -99,10 +100,11 @@ message(STATUS "CMAKE_THREAD_LIBS_INIT: ${CMAKE_THREAD_LIBS_INIT}")
 
 add_executable(${ProjectMainName}
         src/main.cpp
-        src/AprilTagData.cpp
-        src/AprilTagData.h
+#        src/AprilTagData.cpp
+#        src/AprilTagData.h
         src/OwlLog.cpp
         src/OwlLog.h
+        src/3thlib/cpp-httplib/httplib.h
         )
 
 target_link_libraries(${ProjectMainName} ${CMAKE_THREAD_LIBS_INIT})
