@@ -78,7 +78,7 @@ find_package(Boost 1.81.0 REQUIRED COMPONENTS system filesystem program_options 
 if (OpenCV_WORLD)
     find_package(OpenCV REQUIRED world)
 else (OpenCV_WORLD)
-    find_package(OpenCV REQUIRED)
+    find_package(OpenCV REQUIRED core)
 endif (OpenCV_WORLD)
 
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
@@ -96,6 +96,9 @@ message(STATUS "Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 message(STATUS "Boost_VERSION: ${Boost_VERSION}")
 
+message(STATUS "AprilTag_INCLUDE_DIRS: ${AprilTag_INCLUDE_DIRS}")
+message(STATUS "AprilTag_LIB: ${AprilTag_LIB}")
+
 message(STATUS "CMAKE_THREAD_LIBS_INIT: ${CMAKE_THREAD_LIBS_INIT}")
 
 add_executable(${ProjectMainName}
@@ -104,7 +107,7 @@ add_executable(${ProjectMainName}
 #        src/AprilTagData.h
         src/OwlLog.cpp
         src/OwlLog.h
-        src/3thlib/cpp-httplib/httplib.h
+#        src/3thlib/cpp-httplib/httplib.h
         )
 
 target_link_libraries(${ProjectMainName} ${CMAKE_THREAD_LIBS_INIT})
@@ -115,6 +118,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 
 if (WIN32)
-    target_link_libraries(${ProjectMainName} wsock32 ws2_32 crypt32)
+    message(ERROR "")
 else (WIN32)
 endif (WIN32)
