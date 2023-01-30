@@ -136,6 +136,9 @@ namespace OwlSendResult {
             if (res_.result() == boost::beast::http::status::ok) {
                 // Write the message to standard out
                 BOOST_LOG_TRIVIAL(trace) << res_;
+                if (callback_) {
+                    callback_({}, true);
+                }
             } else {
                 BOOST_LOG_TRIVIAL(error)
                     << "response not ok . " << " res_.result(): " << res_.result() << "\n"
