@@ -41,10 +41,10 @@ namespace OwlSendResult {
                 const std::string &port,
                 const std::string &target,
                 int version,
-                std::map<std::string, std::string> data) {
+                const std::shared_ptr<std::map<std::string, std::string>> &data) {
 
             boost::url method{target};
-            for (const auto &a: data) {
+            for (const auto &a: *data) {
                 method.params().set(a.first, a.second);
             }
 
@@ -163,7 +163,7 @@ namespace OwlSendResult {
         std::make_shared<SendResultSession>(ioc_,
                                             [](boost::beast::error_code ec, bool ok) {},
                                             timeoutMs)
-                ->run(host, port, target, version, std::map<std::string, std::string>{});
+                ->run(host, port, target, version, std::make_shared<std::map<std::string, std::string>>());
     }
 
     std::shared_ptr<SendResultSession>
@@ -171,7 +171,7 @@ namespace OwlSendResult {
                      const std::string &port,
                      const std::string &target,
                      int version,
-                     std::map<std::string, std::string> data,
+                     std::shared_ptr<std::map<std::string, std::string>> data,
                      CallbackFunctionType &&callback) {
         auto p = std::make_shared<SendResultSession>(ioc_, std::move(callback), timeoutMs);
         p->run(host, port, target, version, data);

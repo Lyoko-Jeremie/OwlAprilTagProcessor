@@ -42,7 +42,7 @@ namespace OwlSendResult {
                 const std::string &port,
                 const std::string &target,
                 int version,
-                std::map<std::string, std::string> data,
+                std::shared_ptr<std::map<std::string, std::string>> data,
                 CallbackFunctionType &&callback);
 
     };
