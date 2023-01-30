@@ -25,7 +25,10 @@ namespace OwlGetImage {
                 : ioc_(ioc) {
         }
 
+    private:
         boost::asio::io_context &ioc_;
+
+    public:
 
         void test(
                 const std::string &host,

@@ -24,7 +24,10 @@ namespace OwlSendResult {
                 : ioc_(ioc) {
         }
 
+    private:
         boost::asio::io_context &ioc_;
+
+    public:
 
         long timeoutMs = 1 * 1000;
 
