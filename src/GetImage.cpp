@@ -22,15 +22,18 @@ namespace OwlGetImage {
 
         CallbackFunctionType callback_;
 
+        long timeoutMs_ = 30 * 1000;
     public:
         // Objects are constructed with a strand to
         // ensure that handlers do not execute concurrently.
         explicit
         session(boost::asio::io_context &ioc,
-                CallbackFunctionType &&callback)
+                CallbackFunctionType &&callback,
+                long timeoutMs = 30 * 1000)
                 : resolver_(boost::asio::make_strand(ioc)),
                   stream_(boost::asio::make_strand(ioc)),
-                  callback_(callback) {
+                  callback_(callback),
+                  timeoutMs_(timeoutMs) {
         }
 
         // Start the asynchronous operation
@@ -62,7 +65,7 @@ namespace OwlGetImage {
         void
         fail(boost::beast::error_code ec, char const *what) {
             BOOST_LOG_TRIVIAL(error) << what << ": " << ec.message();
-            callback_(ec, {});
+            callback_(ec, false, {});
         }
 
 
@@ -74,7 +77,7 @@ namespace OwlGetImage {
                 return fail(ec, "resolve");
 
             // Set a timeout on the operation
-            stream_.expires_after(std::chrono::seconds(30));
+            stream_.expires_after(std::chrono::milliseconds(timeoutMs_));
 
             // Make the connection on the IP address we get from a lookup
             stream_.async_connect(
@@ -134,25 +137,31 @@ namespace OwlGetImage {
 
                 if (res_.at(boost::beast::http::field::content_type) == "image/jpeg"
                     && res_.at("X-image-format") == "jpeg") {
+
                     // this is out image
-                    // TODO
                     // https://github.com/boostorg/beast/issues/1637
                     auto img = cv::imdecode(
                             cv::InputArray{res_.body().data(), static_cast<int>(res_.body().size())},
                             cv::ImreadModes::IMREAD_UNCHANGED
                     );
                     if (callback_) {
-                        callback_({}, std::move(img));
+                        callback_({}, true, std::move(img));
                     }
 
                 } else {
                     BOOST_LOG_TRIVIAL(error) << "bad response.";
+                    if (callback_) {
+                        callback_({}, false, {});
+                    }
                 }
 
             } else {
                 BOOST_LOG_TRIVIAL(error)
                     << "response not ok . " << " res_.result(): " << res_.result() << "\n"
                     << std::string{reinterpret_cast<char *>(res_.body().data()), res_.body().size()};
+                if (callback_) {
+                    callback_({}, false, {});
+                }
             }
 
 
@@ -168,7 +177,7 @@ namespace OwlGetImage {
     };
 
     void GetImage::test(const std::string &host, const std::string &port, const std::string &target, int version) {
-        std::make_shared<session>(ioc_, [](boost::beast::error_code ec, cv::Mat img) {})
+        std::make_shared<session>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {})
                 ->run(host, port, target, version);
     }
 

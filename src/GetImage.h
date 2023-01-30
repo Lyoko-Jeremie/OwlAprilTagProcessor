@@ -16,7 +16,7 @@ namespace OwlGetImage {
 
     class session;
 
-    using CallbackFunctionType = std::function<void(boost::beast::error_code ec, cv::Mat img)>;
+    using CallbackFunctionType = std::function<void(boost::beast::error_code ec, bool ok, cv::Mat img)>;
 
     class GetImage {
     public:
