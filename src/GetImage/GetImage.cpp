@@ -177,7 +177,7 @@ namespace OwlGetImage {
     };
 
     void GetImage::test(const std::string &host, const std::string &port, const std::string &target, int version) {
-        std::make_shared<GetImageSession>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {})
+        std::make_shared<GetImageSession>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {}, timeoutMs)
                 ->run(host, port, target, version);
     }
 
@@ -187,7 +187,7 @@ namespace OwlGetImage {
                   const std::string &target,
                   int version,
                   CallbackFunctionType &&callback) {
-        auto p = std::make_shared<GetImageSession>(ioc_, std::move(callback));
+        auto p = std::make_shared<GetImageSession>(ioc_, std::move(callback), timeoutMs);
         p->run(host, port, target, version);
         return p;
     }

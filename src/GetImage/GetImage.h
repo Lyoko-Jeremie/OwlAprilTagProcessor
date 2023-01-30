@@ -30,6 +30,8 @@ namespace OwlGetImage {
 
     public:
 
+        long timeoutMs = 1 * 1000;
+
         void test(
                 const std::string &host,
                 const std::string &port,
