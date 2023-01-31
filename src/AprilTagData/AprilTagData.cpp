@@ -29,6 +29,15 @@ namespace OwlAprilTagData {
         }
 
         auto analysis(cv::Mat image) -> std::shared_ptr<AprilTagDataObject> {
+
+            BOOST_LOG_TRIVIAL(trace) << "image:"
+                                     << " cols " << image.cols
+                                     << " rows " << image.rows;
+            if (image.channels() > 1) {
+                cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
+            }
+            cv::resize(image, image, cv::Size{640, 480}, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+
             image_u8_t img_header = {.width = image.cols,
                     .height = image.rows,
                     .stride = image.cols,

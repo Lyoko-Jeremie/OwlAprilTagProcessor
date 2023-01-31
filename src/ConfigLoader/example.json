@@ -3,14 +3,14 @@
   "timeDurationMs": 1000,
   "timeoutCountLimit": 1000,
   "configGetImage": {
-    "host": "127.0.0.1",
+    "host": "192.168.137.152",
     "port": "23331",
     "target": "/1",
     "version": 11,
     "timeoutMs": 1000
   },
   "configSendResult": {
-    "host": "127.0.0.1",
+    "host": "192.168.137.152",
     "port": "23338",
     "target": "/cmd",
     "version": 11,
