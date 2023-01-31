@@ -122,6 +122,7 @@ namespace OwlTagConfigLoader {
 
         config_.timeStartMs = get(root, "timeStartMs", config_.timeStartMs);
         config_.timeDurationMs = get(root, "timeDurationMs", config_.timeDurationMs);
+        config_.timeoutCountLimit = get(root, "timeoutCountLimit", config_.timeoutCountLimit);
 
         if (root.contains("configGetImage")) {
             auto configGetImage = getObj(root, "configGetImage");

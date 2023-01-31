@@ -38,6 +38,7 @@ namespace OwlTagConfigLoader {
     struct Config {
         long timeStartMs = 1 * 1000;
         long timeDurationMs = 300;
+        long timeoutCountLimit = 6;
 
         ConfigGetImage configGetImage;
         ConfigSendResult configSendResult;
@@ -55,6 +56,7 @@ namespace OwlTagConfigLoader {
                 << "\n" << "TagConfigLoader config:"
                 << "\n" << "timeStartMs " << config.timeStartMs
                 << "\n" << "timeDurationMs " << config.timeDurationMs
+                << "\n" << "timeoutCountLimit " << config.timeoutCountLimit
                 << "\n" << "ConfigGetImage :"
                 << "\n" << "\t host " << config.configGetImage.host
                 << "\n" << "\t port " << config.configGetImage.port
