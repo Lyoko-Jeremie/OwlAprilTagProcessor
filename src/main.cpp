@@ -10,8 +10,19 @@
 #include <boost/asio/signal_set.hpp>
 #include <boost/thread.hpp>
 #include <boost/beast.hpp>
+#include <boost/program_options.hpp>
 
+#include "AprilTagData/AprilTagData.h"
 #include "GetImage/GetImage.h"
+#include "SendResult/SendResult.h"
+#include "ConfigLoader/TagConfigLoader.h"
+#include "TagProcessor/TagProcessor.h"
+
+
+#ifndef DEFAULT_CONFIG
+#define DEFAULT_CONFIG R"(config.json)"
+#endif // DEFAULT_CONFIG
+
 
 struct ThreadCallee {
     boost::asio::io_context &ioc;
@@ -45,92 +56,67 @@ struct ThreadCallee {
 };
 
 
-int main() {
+int main(int argc, const char *argv[]) {
     std::cout << "Hello, World!" << std::endl;
     OwlLog::threadName = "main";
     OwlLog::init_logging();
 
-//    httplib::Client cli("bing.com", 80);
-//
-////    cli.set_connection_timeout(0, 300000); // 300 milliseconds
-////    cli.set_read_timeout(5, 0); // 5 seconds
-////    cli.set_write_timeout(5, 0); // 5 seconds
-//
-//    std::cout << "res 1";
-//    auto res = cli.Get("/1");
-//
-//    std::cout << "res 2";
-//
-//    if (res) {
-//        if (res->status == 200) {
-//            std::cout << res->body << std::endl;
-//        }
-//        std::cout << "res->status: " << res->status << std::endl;
-//    } else {
-//        auto err = res.error();
-//        std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
-//    }
 
 
-    boost::asio::io_context ioc;
-    auto ppp = std::make_shared<OwlGetImage::GetImage>(ioc);
+    // parse start params
+    std::string config_file;
+    boost::program_options::options_description desc("options");
+    desc.add_options()
+            ("config,c", boost::program_options::value<std::string>(&config_file)->
+                    default_value(DEFAULT_CONFIG)->
+                    value_name("CONFIG"), "specify config file")
+            ("help,h", "print help message")
+            ("version,v", "print version and build info");
+    boost::program_options::positional_options_description pd;
+    pd.add("config", 1);
+    boost::program_options::variables_map vMap;
+    boost::program_options::store(
+            boost::program_options::command_line_parser(argc, argv)
+                    .options(desc)
+                    .positional(pd)
+                    .run(), vMap);
+    boost::program_options::notify(vMap);
+    if (vMap.count("help")) {
+        std::cout << "usage: " << argv[0] << " [[-c] CONFIG]" << "\n" << std::endl;
 
-    std::string host{"bing.com"};
-    std::string port{"80"};
-    std::string target{""};
-    int version = 11;
+        std::cout << "    OwlAccessTerminal  Copyright (C) 2023 \n"
+                  << "\n" << std::endl;
 
-    ppp->test(host, port, target, version);
+        std::cout << desc << std::endl;
+        return 0;
+    }
+    if (vMap.count("version")) {
+        std::cout << "Boost " << BOOST_LIB_VERSION <<
+                  ", OpenCV " << CV_VERSION
+                  << std::endl;
+        return 0;
+    }
 
-//    // The io_context is required for all I/O
-//    boost::asio::io_context ioc;
-//
-//    // These objects perform our I/O
-//    boost::asio::ip::tcp::resolver resolver(ioc);
-//    boost::beast::tcp_stream stream(ioc);
-//
-//    // Look up the domain name
-//    boost::beast::error_code ec1;
-//    auto const results = resolver.resolve(host, port, ec1);
-//    if (ec1) {
-//        throw boost::beast::system_error{ec1};
-//    }
-//
-//
-//    // Make the connection on the IP address we get from a lookup
-//    stream.connect(results);
-//
-//    // Set up an HTTP GET request message
-//    boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, target, version};
-//    req.set(boost::beast::http::field::host, host);
-//    req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-//
-//    // Send the HTTP request to the remote host
-//    boost::beast::http::write(stream, req);
-//
-//    // This buffer is used for reading and must be persisted
-//    boost::beast::flat_buffer buffer;
-//
-//    // Declare a container to hold the response
-//    boost::beast::http::response<boost::beast::http::dynamic_body> res;
-//
-//    // Receive the HTTP response
-//    boost::beast::http::read(stream, buffer, res);
-//
-//    // Write the message to standard out
-//    std::cout << res << std::endl;
-//
-//    // Gracefully close the socket
-//    boost::beast::error_code ec;
-//    stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-//
-//    // not_connected happens sometimes
-//    // so don't bother reporting it.
-//    //
-//    if (ec && ec != boost::beast::errc::not_connected) {
-//        throw boost::beast::system_error{ec};
-//    }
+    BOOST_LOG_TRIVIAL(info) << "config_file: " << config_file;
 
+    // load config
+    auto config = std::make_shared<OwlTagConfigLoader::TagConfigLoader>();
+    config->init(config_file);
+    config->print();
+
+
+    boost::asio::io_context ioc_Processor;
+    auto ptr_GetImage = std::make_shared<OwlGetImage::GetImage>(ioc_Processor);
+    auto ptr_SendResult = std::make_shared<OwlSendResult::SendResult>(ioc_Processor);
+    auto ptr_AprilTagData = std::make_shared<OwlAprilTagData::AprilTagData>();
+    auto ptr_TagProcessor = std::make_shared<OwlTagProcessor::TagProcessor>(
+            ioc_Processor,
+            ptr_GetImage,
+            ptr_SendResult,
+            ptr_AprilTagData,
+            config
+    );
+    ptr_TagProcessor->start();
 
     boost::asio::io_context ioc_keyboard;
     boost::asio::signal_set sig(ioc_keyboard);
@@ -147,11 +133,7 @@ int main() {
             case SIGTERM: {
                 // stop all service on there
                 BOOST_LOG_TRIVIAL(info) << "stopping all service. ";
-//                ioc_cmd.stop();
-//                ioc_imageWeb.stop();
-//                ioc_cameraReader.stop();
-//                ioc_web_static.stop();
-                ioc.stop();
+                ioc_Processor.stop();
                 ioc_keyboard.stop();
             }
                 break;
@@ -165,12 +147,7 @@ int main() {
     BOOST_LOG_TRIVIAL(info) << "processor_count: " << processor_count;
 
     boost::thread_group tg;
-//    tg.create_thread(ThreadCallee{ioc_cmd, tg, "ioc_cmd"});
-//    tg.create_thread(ThreadCallee{ioc_imageWeb, tg, "ioc_imageWeb"});
-//    tg.create_thread(ThreadCallee{ioc_cameraReader, tg, "ioc_cameraReader 1"});
-//    tg.create_thread(ThreadCallee{ioc_cameraReader, tg, "ioc_cameraReader 2"});
-//    tg.create_thread(ThreadCallee{ioc_web_static, tg, "ioc_web_static"});
-    tg.create_thread(ThreadCallee{ioc, tg, "ioc_ioc"});
+    tg.create_thread(ThreadCallee{ioc_Processor, tg, "ioc_Processor"});
     tg.create_thread(ThreadCallee{ioc_keyboard, tg, "ioc_keyboard"});
 
 
