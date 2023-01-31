@@ -179,7 +179,11 @@ namespace OwlGetImage {
     };
 
     void GetImage::test(const std::string &host, const std::string &port, const std::string &target, int version) {
-        std::make_shared<GetImageSession>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {}, timeoutMs)
+        std::make_shared<GetImageSession>(ioc_, [](boost::beast::error_code ec, bool ok, cv::Mat img) {
+            boost::ignore_unused(ec);
+            boost::ignore_unused(ok);
+            boost::ignore_unused(img);
+            }, timeoutMs)
                 ->run(host, port, target, version);
     }
 

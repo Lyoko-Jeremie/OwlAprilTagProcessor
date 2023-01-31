@@ -163,9 +163,13 @@ namespace OwlSendResult {
     };
 
     void SendResult::test(const std::string &host, const std::string &port, const std::string &target, int version) {
-        std::make_shared<SendResultSession>(ioc_,
-                                            [](boost::beast::error_code ec, bool ok) {},
-                                            timeoutMs)
+        std::make_shared<SendResultSession>(
+                ioc_,
+                [](boost::beast::error_code ec, bool ok) {
+                    boost::ignore_unused(ec);
+                    boost::ignore_unused(ok);
+                },
+                timeoutMs)
                 ->run(host, port, target, version, std::make_shared<std::map<std::string, std::string>>());
     }
 
