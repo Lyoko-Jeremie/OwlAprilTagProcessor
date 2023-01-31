@@ -30,7 +30,8 @@ namespace OwlTagProcessor {
             ptr_AprilTagData_(std::move(ptr_AprilTagData)),
             ptr_TagConfigLoader_(std::move(TagConfigLoader)),
             timeStartMs_(ptr_TagConfigLoader_->config.timeStartMs),
-            timeDurationMs_(ptr_TagConfigLoader_->config.timeDurationMs) {
+            timeDurationMs_(ptr_TagConfigLoader_->config.timeDurationMs),
+            timeoutCountLimit_(ptr_TagConfigLoader_->config.timeoutCountLimit) {
         }
 
     private:
@@ -47,12 +48,25 @@ namespace OwlTagProcessor {
 
         std::shared_ptr<boost::asio::steady_timer> timer_;
 
+        size_t timeoutCount_ = 0;
+        const size_t timeoutCountLimit_ = 6;
+
     public:
         void start();
 
     private:
 
-        void time_loop(const boost::system::error_code &ec);
+        void to_get_image(const boost::system::error_code &ec);
+
+        void to_analysis_april_tag(cv::Mat img);
+
+        void to_send_result(std::shared_ptr<OwlAprilTagData::AprilTagResultType> o);
+
+        void skip_to_next_loop();
+
+        void restart_to_next_loop(const boost::system::error_code &ec);
+
+        void next_loop();
 
     };
 
