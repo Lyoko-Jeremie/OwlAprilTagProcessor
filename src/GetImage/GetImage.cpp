@@ -138,7 +138,7 @@ namespace OwlGetImage {
 //                BOOST_LOG_TRIVIAL(trace) << "[[[[[[all end.";
 
                 if (res_.at(boost::beast::http::field::content_type) == "image/jpeg"
-                    && res_.at("X-image-format") == "jpeg") {
+                    && res_.at("X-image-format") == "jpg") {
 
                     // this is out image
                     // https://github.com/boostorg/beast/issues/1637
@@ -151,7 +151,9 @@ namespace OwlGetImage {
                     }
 
                 } else {
-                    BOOST_LOG_TRIVIAL(error) << "bad response.";
+                    BOOST_LOG_TRIVIAL(error) << "bad response. :"
+                                             << "\ncontent_type:" << res_.at(boost::beast::http::field::content_type)
+                                             << "\nX-image-format:" << res_.at("X-image-format");
                     if (callback_) {
                         callback_({}, false, {});
                     }
@@ -183,7 +185,7 @@ namespace OwlGetImage {
             boost::ignore_unused(ec);
             boost::ignore_unused(ok);
             boost::ignore_unused(img);
-            }, timeoutMs)
+        }, timeoutMs)
                 ->run(host, port, target, version);
     }
 
