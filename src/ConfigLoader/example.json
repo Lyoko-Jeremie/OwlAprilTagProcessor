@@ -1,0 +1,19 @@
+{
+  "timeStartMs": 1000,
+  "timeDurationMs": 1000,
+  "timeoutCountLimit": 1000,
+  "configGetImage": {
+    "host": "127.0.0.1",
+    "port": "23331",
+    "target": "/1",
+    "version": 11,
+    "timeoutMs": 1000
+  },
+  "configSendResult": {
+    "host": "127.0.0.1",
+    "port": "23338",
+    "target": "/cmd",
+    "version": 11,
+    "timeoutMs": 1000
+  }
+}

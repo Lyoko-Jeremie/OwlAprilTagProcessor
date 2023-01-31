@@ -21,7 +21,7 @@ namespace OwlTagConfigLoader {
 
         std::string host = "127.0.0.1";
         std::string port = "23331";
-        std::string target = "/";
+        std::string target = "/1";
         int version = 11;
         long timeoutMs = 1 * 1000;
     };
@@ -30,7 +30,7 @@ namespace OwlTagConfigLoader {
 
         std::string host = "127.0.0.1";
         std::string port = "23338";
-        std::string target = "/";
+        std::string target = "/cmd";
         int version = 11;
         long timeoutMs = 1 * 1000;
     };
