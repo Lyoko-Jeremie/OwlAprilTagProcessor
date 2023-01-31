@@ -20,6 +20,7 @@ extern "C" {
 
 namespace OwlAprilTagData {
 
+    AprilTagData::AprilTagData() : impl(std::make_shared<AprilTagDataImpl>()) {}
 
     struct AprilTagDataImpl : public std::enable_shared_from_this<AprilTagDataImpl> {
         AprilTagDataImpl() {
@@ -31,12 +32,20 @@ namespace OwlAprilTagData {
         auto analysis(cv::Mat image) -> std::shared_ptr<AprilTagDataObject> {
 
             BOOST_LOG_TRIVIAL(trace) << "image:"
+                                     << " isContinuous " << image.isContinuous()
                                      << " cols " << image.cols
                                      << " rows " << image.rows;
+
+            // TODO
             if (image.channels() > 1) {
                 cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
             }
             cv::resize(image, image, cv::Size{640, 480}, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+
+            BOOST_LOG_TRIVIAL(trace) << "image:"
+                                     << " isContinuous " << image.isContinuous()
+                                     << " cols " << image.cols
+                                     << " rows " << image.rows;
 
             image_u8_t img_header = {.width = image.cols,
                     .height = image.rows,

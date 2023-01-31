@@ -58,6 +58,11 @@ namespace OwlTagProcessor {
                         }
                         timeoutCount_ = 0;
 
+                        if (img.empty()) {
+                            BOOST_LOG_TRIVIAL(trace) << "to_get_image (img.empty()). ";
+                            // skip
+                            return skip_to_next_loop();
+                        }
 
                         to_analysis_april_tag(img);
 
