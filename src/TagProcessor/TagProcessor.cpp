@@ -69,7 +69,7 @@ namespace OwlTagProcessor {
     }
 
     void TagProcessor::to_analysis_april_tag(cv::Mat img) {
-        auto r = ptr_AprilTagData_->analysis(std::move(img));
+        auto r = ptr_AprilTagData_->analysis(img);
         auto o = AprilTagDataObject2ResultType(r);
 
         to_send_result(std::move(o));

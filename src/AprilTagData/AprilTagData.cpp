@@ -44,6 +44,11 @@ namespace OwlAprilTagData {
                     .buf = image.data
             };
 
+            BOOST_LOG_TRIVIAL(trace) << "image:"
+                                     << " cols " << img_header.width
+                                     << " rows " << img_header.height
+                                     << " stride " << img_header.stride;
+
             zarray_t *detections = apriltag_detector_detect(td, &img_header);
 
             for (int i = 0; i < zarray_size(detections); i++) {
@@ -88,7 +93,7 @@ namespace OwlAprilTagData {
     }
 
     std::shared_ptr<AprilTagDataObject> AprilTagData::analysis(cv::Mat image) {
-        return impl->analysis(std::move(image));
+        return impl->analysis(image);
     }
 } // OwlAprilTagData
 
