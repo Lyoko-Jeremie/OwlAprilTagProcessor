@@ -135,6 +135,7 @@ namespace OwlTagProcessor {
             timer_->cancel();
             return;
         }
+        BOOST_LOG_TRIVIAL(trace) << "restart_to_next_loop skip. ";
 
         // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
         // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
