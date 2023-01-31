@@ -37,28 +37,31 @@ namespace OwlTagProcessor {
                 ptr_TagConfigLoader_->config.configGetImage.version,
                 [this, self = shared_from_this()]
                         (boost::beast::error_code ec, bool ok, cv::Mat img) {
-                    if (ec) {
-                        // check stop or skip
-                        if (ec == boost::beast::error::timeout) {
-                            ++timeoutCount_;
-                            if (timeoutCount_ > timeoutCountLimit_) {
-                                // too many continue timeout
-                                timeoutCount_ = timeoutCountLimit_;
-                                return restart_to_next_loop(ec);
+                    boost::asio::dispatch([this, self = shared_from_this(), ec, ok, img]() {
+
+                        if (ec) {
+                            // check stop or skip
+                            if (ec == boost::beast::error::timeout) {
+                                ++timeoutCount_;
+                                if (timeoutCount_ > timeoutCountLimit_) {
+                                    // too many continue timeout
+                                    timeoutCount_ = timeoutCountLimit_;
+                                    return restart_to_next_loop(ec);
+                                }
+                                return skip_to_next_loop();
                             }
+                            return restart_to_next_loop(ec);
+                        }
+                        if (!ok) {
+                            // skip
                             return skip_to_next_loop();
                         }
-                        return restart_to_next_loop(ec);
-                    }
-                    if (!ok) {
-                        // skip
-                        return skip_to_next_loop();
-                    }
-                    timeoutCount_ = 0;
+                        timeoutCount_ = 0;
 
 
-                    to_analysis_april_tag(std::move(img));
+                        to_analysis_april_tag(img);
 
+                    });
 
                 }
         );
@@ -83,26 +86,30 @@ namespace OwlTagProcessor {
                 o,
                 [this, self = shared_from_this(), o]
                         (boost::beast::error_code ec, bool ok) {
-                    if (ec) {
-                        // check stop or skip
-                        if (ec == boost::beast::error::timeout) {
-                            ++timeoutCount_;
-                            if (timeoutCount_ > timeoutCountLimit_) {
-                                // too many continue timeout
-                                timeoutCount_ = timeoutCountLimit_;
-                                return restart_to_next_loop(ec);
+                    boost::asio::dispatch([this, self = shared_from_this(), ec, ok]() {
+
+                        if (ec) {
+                            // check stop or skip
+                            if (ec == boost::beast::error::timeout) {
+                                ++timeoutCount_;
+                                if (timeoutCount_ > timeoutCountLimit_) {
+                                    // too many continue timeout
+                                    timeoutCount_ = timeoutCountLimit_;
+                                    return restart_to_next_loop(ec);
+                                }
+                                return skip_to_next_loop();
                             }
+                            return restart_to_next_loop(ec);
+                        }
+                        if (!ok) {
+                            // skip
                             return skip_to_next_loop();
                         }
-                        return restart_to_next_loop(ec);
-                    }
-                    if (!ok) {
-                        // skip
-                        return skip_to_next_loop();
-                    }
-                    timeoutCount_ = 0;
+                        timeoutCount_ = 0;
 
-                    next_loop();
+                        next_loop();
+
+                    });
                 }
         );
 
