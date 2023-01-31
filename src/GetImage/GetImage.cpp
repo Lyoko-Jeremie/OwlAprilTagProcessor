@@ -127,6 +127,8 @@ namespace OwlGetImage {
             if (ec)
                 return fail(ec, "read");
 
+            stream_.expires_never();
+
             if (res_.result() == boost::beast::http::status::ok) {
 
 //                // TODO this is debug

@@ -133,6 +133,8 @@ namespace OwlSendResult {
             if (ec)
                 return fail(ec, "read");
 
+            stream_.expires_never();
+
             if (res_.result() == boost::beast::http::status::ok) {
                 // Write the message to standard out
                 BOOST_LOG_TRIVIAL(trace) << res_;
