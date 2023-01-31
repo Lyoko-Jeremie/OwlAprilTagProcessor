@@ -21,12 +21,12 @@ namespace OwlAprilTagData {
 
     class AprilTagData : public std::enable_shared_from_this<AprilTagData> {
     public:
-        AprilTagData() = default;
+        AprilTagData();
 
         std::shared_ptr<AprilTagDataObject> analysis(cv::Mat image);
 
     private:
-        std::shared_ptr<AprilTagDataImpl> impl{};
+        std::shared_ptr<AprilTagDataImpl> impl;
 
     };
 
