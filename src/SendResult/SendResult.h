@@ -10,6 +10,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
+#include "../AprilTagData/AprilTagData.h"
 
 namespace OwlSendResult {
 
@@ -42,7 +43,7 @@ namespace OwlSendResult {
                 const std::string &port,
                 const std::string &target,
                 int version,
-                std::shared_ptr<std::map<std::string, std::string>> data,
+                std::shared_ptr<OwlAprilTagData::AprilTagResultType> data,
                 CallbackFunctionType &&callback);
 
     };

@@ -41,8 +41,9 @@ namespace OwlSendResult {
                 const std::string &port,
                 const std::string &target,
                 int version,
-                const std::shared_ptr<std::map<std::string, std::string>> &data) {
+                const std::shared_ptr<OwlAprilTagData::AprilTagResultType> &data) {
 
+            // TODO
             boost::url method{target};
             for (const auto &a: *data) {
                 method.params().set(a.first, a.second);
@@ -52,7 +53,7 @@ namespace OwlSendResult {
 
             // Set up an HTTP GET request message
             req_.version(version);
-            req_.method(boost::beast::http::verb::get);
+            req_.method(boost::beast::http::verb::post);
             req_.target(method.buffer());
             req_.set(boost::beast::http::field::host, host);
             req_.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
@@ -173,7 +174,7 @@ namespace OwlSendResult {
                      const std::string &port,
                      const std::string &target,
                      int version,
-                     std::shared_ptr<std::map<std::string, std::string>> data,
+                     std::shared_ptr<OwlAprilTagData::AprilTagResultType> data,
                      CallbackFunctionType &&callback) {
         auto p = std::make_shared<SendResultSession>(ioc_, std::move(callback), timeoutMs);
         p->run(host, port, target, version, data);

@@ -15,7 +15,9 @@ namespace OwlAprilTagData {
         // TODO
     };
 
-    auto AprilTagDataObject2Map(std::shared_ptr<AprilTagDataObject> o) -> std::shared_ptr<std::map<std::string, std::string>>;
+    using AprilTagResultType = std::map<std::string, std::string>;
+
+    auto AprilTagDataObject2ResultType(std::shared_ptr<AprilTagDataObject> o) -> std::shared_ptr<AprilTagResultType>;
 
     class AprilTagData : public std::enable_shared_from_this<AprilTagData> {
     public:

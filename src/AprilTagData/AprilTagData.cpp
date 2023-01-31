@@ -70,9 +70,9 @@ namespace OwlAprilTagData {
         apriltag_family_t *tf;
     };
 
-    auto AprilTagDataObject2Map(std::shared_ptr<AprilTagDataObject> o)
-    -> std::shared_ptr<std::map<std::string, std::string>> {
-        std::shared_ptr<std::map<std::string, std::string>> m = std::make_shared<std::map<std::string, std::string>>();
+    auto AprilTagDataObject2ResultType(std::shared_ptr<AprilTagDataObject> o)
+    -> std::shared_ptr<AprilTagResultType> {
+        std::shared_ptr<AprilTagResultType> m = std::make_shared<AprilTagResultType>();
         // TODO
         m->try_emplace("", "");
         return m;
