@@ -131,6 +131,7 @@ namespace OwlTagProcessor {
 
     void TagProcessor::restart_to_next_loop(const boost::system::error_code &ec) {
         if (ec && ec != boost::beast::error::timeout) {
+            // TODO
             BOOST_LOG_TRIVIAL(error) << "restart_to_next_loop stop ec: " << ec;
             timer_->cancel();
             return;
