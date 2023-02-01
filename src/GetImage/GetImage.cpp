@@ -145,7 +145,7 @@ namespace OwlGetImage {
                     auto img = cv::imdecode(
                             cv::InputArray{res_.body().data(), static_cast<int>(res_.body().size())},
                             cv::ImreadModes::IMREAD_UNCHANGED
-                    ).clone();
+                    );
                     if (callback_) {
                         callback_({}, true, img);
                     }
