@@ -123,15 +123,21 @@ namespace OwlTagConfigLoader {
         if (root.contains("configTagProcessor")) {
             auto configTagProcessor = getObj(root, "configTagProcessor");
             config_.configTagProcessor.timeStartMs = get(configTagProcessor,
-                                                         "host", config_.configTagProcessor.timeStartMs);
+                                                         "timeStartMs", config_.configTagProcessor.timeStartMs);
             config_.configTagProcessor.timeDurationMs = get(configTagProcessor,
-                                                            "host", config_.configTagProcessor.timeDurationMs);
+                                                            "timeDurationMs",
+                                                            config_.configTagProcessor.timeDurationMs);
             config_.configTagProcessor.timeoutCountLimit = get(configTagProcessor,
-                                                               "host", config_.configTagProcessor.timeoutCountLimit);
-            config_.configTagProcessor.resizeWidth = get(configTagProcessor,
-                                                         "host", config_.configTagProcessor.resizeWidth);
-            config_.configTagProcessor.resizeHeight = get(configTagProcessor,
-                                                          "host", config_.configTagProcessor.resizeHeight);
+                                                               "timeoutCountLimit",
+                                                               config_.configTagProcessor.timeoutCountLimit);
+        }
+
+        if (root.contains("configAprilTagData")) {
+            auto configAprilTagData = getObj(root, "configAprilTagData");
+            config_.configAprilTagData.resizeWidth = get(configAprilTagData,
+                                                         "resizeWidth", config_.configAprilTagData.resizeWidth);
+            config_.configAprilTagData.resizeHeight = get(configAprilTagData,
+                                                          "resizeHeight", config_.configAprilTagData.resizeHeight);
         }
 
         if (root.contains("configGetImage")) {
