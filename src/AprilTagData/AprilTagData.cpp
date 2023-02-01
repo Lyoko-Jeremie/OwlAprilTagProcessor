@@ -20,14 +20,19 @@ extern "C" {
 
 namespace OwlAprilTagData {
 
-    AprilTagData::AprilTagData() : impl(std::make_shared<AprilTagDataImpl>()) {}
+    AprilTagData::AprilTagData(
+            const std::shared_ptr<OwlTagConfigLoader::TagConfigLoader>& tagConfigLoader
+    ) : impl(std::make_shared<AprilTagDataImpl>(tagConfigLoader)) {}
 
     struct AprilTagDataImpl : public std::enable_shared_from_this<AprilTagDataImpl> {
-        AprilTagDataImpl() {
+        explicit AprilTagDataImpl(std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> tagConfigLoader)
+                : tagConfigLoader_(std::move(tagConfigLoader)) {
             td = apriltag_detector_create();
             tf = tagStandard41h12_create();
             apriltag_detector_add_family(td, tf);
         }
+
+        std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> tagConfigLoader_;
 
         auto analysis(cv::Mat image) -> std::shared_ptr<AprilTagDataObject> {
 
@@ -36,11 +41,16 @@ namespace OwlAprilTagData {
                                      << " cols " << image.cols
                                      << " rows " << image.rows;
 
-            // TODO
             if (image.channels() > 1) {
                 cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
             }
-            cv::resize(image, image, cv::Size{640, 480}, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+            if (image.cols > tagConfigLoader_->config.configAprilTagData.resizeWidth
+                || image.rows > tagConfigLoader_->config.configAprilTagData.resizeHeight) {
+                cv::resize(image, image, cv::Size{
+                        tagConfigLoader_->config.configAprilTagData.resizeWidth,
+                        tagConfigLoader_->config.configAprilTagData.resizeHeight
+                }, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+            }
 
             BOOST_LOG_TRIVIAL(trace) << "image:"
                                      << " isContinuous " << image.isContinuous()

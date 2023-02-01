@@ -29,9 +29,9 @@ namespace OwlTagProcessor {
             ptr_SendResult_(std::move(ptr_SendResult)),
             ptr_AprilTagData_(std::move(ptr_AprilTagData)),
             ptr_TagConfigLoader_(std::move(TagConfigLoader)),
-            timeStartMs_(ptr_TagConfigLoader_->config.timeStartMs),
-            timeDurationMs_(ptr_TagConfigLoader_->config.timeDurationMs),
-            timeoutCountLimit_(ptr_TagConfigLoader_->config.timeoutCountLimit) {
+            timeStartMs_(ptr_TagConfigLoader_->config.configTagProcessor.timeStartMs),
+            timeDurationMs_(ptr_TagConfigLoader_->config.configTagProcessor.timeDurationMs),
+            timeoutCountLimit_(ptr_TagConfigLoader_->config.configTagProcessor.timeoutCountLimit) {
         }
 
     private:

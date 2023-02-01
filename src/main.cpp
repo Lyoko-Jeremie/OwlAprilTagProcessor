@@ -191,7 +191,7 @@ int main(int argc, const char *argv[]) {
     boost::asio::io_context ioc_Processor;
     auto ptr_GetImage = std::make_shared<OwlGetImage::GetImage>(ioc_Processor);
     auto ptr_SendResult = std::make_shared<OwlSendResult::SendResult>(ioc_Processor);
-    auto ptr_AprilTagData = std::make_shared<OwlAprilTagData::AprilTagData>();
+    auto ptr_AprilTagData = std::make_shared<OwlAprilTagData::AprilTagData>(config);
     auto ptr_TagProcessor = std::make_shared<OwlTagProcessor::TagProcessor>(
             ioc_Processor,
             ptr_GetImage,

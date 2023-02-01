@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <opencv2/opencv.hpp>
+#include "../ConfigLoader/TagConfigLoader.h"
 
 namespace OwlAprilTagData {
 
@@ -21,7 +22,7 @@ namespace OwlAprilTagData {
 
     class AprilTagData : public std::enable_shared_from_this<AprilTagData> {
     public:
-        AprilTagData();
+        AprilTagData(const std::shared_ptr<OwlTagConfigLoader::TagConfigLoader>& TagConfigLoader);
 
         std::shared_ptr<AprilTagDataObject> analysis(cv::Mat image);
 
