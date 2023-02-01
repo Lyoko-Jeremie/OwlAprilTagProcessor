@@ -1,7 +1,11 @@
 {
-  "timeStartMs": 1000,
-  "timeDurationMs": 1000,
-  "timeoutCountLimit": 1000,
+  "configTagProcessor": {
+    "timeStartMs": 1000,
+    "timeDurationMs": 1000,
+    "timeoutCountLimit": 1000,
+    "resizeWidth": 640,
+    "resizeHeight": 480
+  },
   "configGetImage": {
     "host": "192.168.137.152",
     "port": "23331",

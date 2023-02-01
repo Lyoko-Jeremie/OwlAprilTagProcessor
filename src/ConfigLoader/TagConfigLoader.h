@@ -35,11 +35,17 @@ namespace OwlTagConfigLoader {
         long timeoutMs = 1 * 1000;
     };
 
-    struct Config {
+    struct ConfigTagProcessor {
         long timeStartMs = 1 * 1000;
         long timeDurationMs = 300;
         long timeoutCountLimit = 6;
 
+        int resizeWidth = 640;
+        int resizeHeight = 480;
+    };
+
+    struct Config {
+        ConfigTagProcessor configTagProcessor;
         ConfigGetImage configGetImage;
         ConfigSendResult configSendResult;
     };
@@ -54,9 +60,12 @@ namespace OwlTagConfigLoader {
             BOOST_LOG_TRIVIAL(info)
                 << "\n"
                 << "\n" << "TagConfigLoader config:"
-                << "\n" << "timeStartMs " << config.timeStartMs
-                << "\n" << "timeDurationMs " << config.timeDurationMs
-                << "\n" << "timeoutCountLimit " << config.timeoutCountLimit
+                << "\n" << "ConfigTagProcessor :"
+                << "\n" << "\t timeStartMs " << config.configTagProcessor.timeStartMs
+                << "\n" << "\t timeDurationMs " << config.configTagProcessor.timeDurationMs
+                << "\n" << "\t timeoutCountLimit " << config.configTagProcessor.timeoutCountLimit
+                << "\n" << "\t resizeWidth " << config.configTagProcessor.resizeWidth
+                << "\n" << "\t resizeHeight " << config.configTagProcessor.resizeHeight
                 << "\n" << "ConfigGetImage :"
                 << "\n" << "\t host " << config.configGetImage.host
                 << "\n" << "\t port " << config.configGetImage.port

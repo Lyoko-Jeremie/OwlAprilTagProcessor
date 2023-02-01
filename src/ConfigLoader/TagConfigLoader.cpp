@@ -120,9 +120,19 @@ namespace OwlTagConfigLoader {
 
         Config config_;
 
-        config_.timeStartMs = get(root, "timeStartMs", config_.timeStartMs);
-        config_.timeDurationMs = get(root, "timeDurationMs", config_.timeDurationMs);
-        config_.timeoutCountLimit = get(root, "timeoutCountLimit", config_.timeoutCountLimit);
+        if (root.contains("configTagProcessor")) {
+            auto configTagProcessor = getObj(root, "configTagProcessor");
+            config_.configTagProcessor.timeStartMs = get(configTagProcessor,
+                                                         "host", config_.configTagProcessor.timeStartMs);
+            config_.configTagProcessor.timeDurationMs = get(configTagProcessor,
+                                                            "host", config_.configTagProcessor.timeDurationMs);
+            config_.configTagProcessor.timeoutCountLimit = get(configTagProcessor,
+                                                               "host", config_.configTagProcessor.timeoutCountLimit);
+            config_.configTagProcessor.resizeWidth = get(configTagProcessor,
+                                                         "host", config_.configTagProcessor.resizeWidth);
+            config_.configTagProcessor.resizeHeight = get(configTagProcessor,
+                                                          "host", config_.configTagProcessor.resizeHeight);
+        }
 
         if (root.contains("configGetImage")) {
             auto configGetImage = getObj(root, "configGetImage");
