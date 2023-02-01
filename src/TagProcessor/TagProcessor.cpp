@@ -37,7 +37,7 @@ namespace OwlTagProcessor {
                 ptr_TagConfigLoader_->config.configGetImage.version,
                 [this, self = shared_from_this()]
                         (boost::beast::error_code ec, bool ok, cv::Mat img) {
-                    boost::asio::dispatch([this, self = shared_from_this(), ec, ok, img]() {
+                    boost::asio::post(ioc_, [this, self = shared_from_this(), ec, ok, img]() {
 
                         if (ec) {
                             // check stop or skip
@@ -91,7 +91,7 @@ namespace OwlTagProcessor {
                 o,
                 [this, self = shared_from_this(), o]
                         (boost::beast::error_code ec, bool ok) {
-                    boost::asio::dispatch([this, self = shared_from_this(), ec, ok]() {
+                    boost::asio::post(ioc_, [this, self = shared_from_this(), ec, ok]() {
 
                         if (ec) {
                             // check stop or skip
