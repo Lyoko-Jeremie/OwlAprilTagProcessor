@@ -4,6 +4,8 @@
 
 #include <utility>
 #include <boost/url.hpp>
+#include <boost/json.hpp>
+#include <boost/array.hpp>
 
 namespace OwlSendResult {
     // https://www.boost.org/doc/libs/1_81_0/libs/beast/example/http/client/async/http_client_async.cpp
@@ -14,7 +16,7 @@ namespace OwlSendResult {
         boost::asio::ip::tcp::resolver resolver_;
         boost::beast::tcp_stream stream_;
         boost::beast::flat_buffer buffer_; // (Must persist between reads)
-        boost::beast::http::request<boost::beast::http::empty_body> req_;
+        boost::beast::http::request<boost::beast::http::string_body> req_;
         boost::beast::http::response<boost::beast::http::string_body> res_;
 
         CallbackFunctionType callback_;
@@ -43,9 +45,8 @@ namespace OwlSendResult {
                 int version,
                 const std::shared_ptr<OwlAprilTagData::AprilTagResultType> &data) {
 
-            // TODO
             boost::url method{target};
-            for (const auto &a: *data) {
+            for (const auto &a: data->params) {
                 method.params().set(a.first, a.second);
             }
 
@@ -56,7 +57,9 @@ namespace OwlSendResult {
             req_.method(boost::beast::http::verb::post);
             req_.target(method.buffer());
             req_.set(boost::beast::http::field::host, host);
+            req_.set(boost::beast::http::field::content_type, "text/json");
             req_.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+            req_.body() = boost::json::serialize(data->body);
             req_.prepare_payload();
 
             // Look up the domain name
@@ -170,7 +173,7 @@ namespace OwlSendResult {
                     boost::ignore_unused(ok);
                 },
                 timeoutMs)
-                ->run(host, port, target, version, std::make_shared<std::map<std::string, std::string>>());
+                ->run(host, port, target, version, std::make_shared<OwlAprilTagData::AprilTagResultType>());
     }
 
     std::shared_ptr<SendResultSession>

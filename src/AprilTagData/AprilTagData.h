@@ -5,24 +5,49 @@
 
 #include <memory>
 #include <opencv2/opencv.hpp>
+#include <boost/json.hpp>
 #include "../ConfigLoader/TagConfigLoader.h"
 
 namespace OwlAprilTagData {
 
     struct AprilTagDataImpl;
 
-    // TODO
-    struct AprilTagDataObject {
-        // TODO
+    struct AprilTagDataTagInfo {
+        // from :
+        //      typedef struct apriltag_detection apriltag_detection_t;
+        //      struct apriltag_detection
+        int id;
+        int hamming;
+        float decision_margin;
+        double centerX;
+        double centerY;
+        double cornerLTx;
+        double cornerLTy;
+        double cornerRTx;
+        double cornerRTy;
+        double cornerRBx;
+        double cornerRBy;
+        double cornerLBx;
+        double cornerLBy;
+
+        boost::json::value to_json_value();
     };
 
-    using AprilTagResultType = std::map<std::string, std::string>;
+    struct AprilTagDataObject {
+        std::vector<AprilTagDataTagInfo> tagInfo;
+        AprilTagDataTagInfo center;
+    };
+
+    struct AprilTagResultType {
+        std::map<std::string, std::string> params;
+        boost::json::value body;
+    };
 
     auto AprilTagDataObject2ResultType(std::shared_ptr<AprilTagDataObject> o) -> std::shared_ptr<AprilTagResultType>;
 
     class AprilTagData : public std::enable_shared_from_this<AprilTagData> {
     public:
-        AprilTagData(const std::shared_ptr<OwlTagConfigLoader::TagConfigLoader>& TagConfigLoader);
+        explicit AprilTagData(const std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> &TagConfigLoader);
 
         std::shared_ptr<AprilTagDataObject> analysis(cv::Mat image);
 
