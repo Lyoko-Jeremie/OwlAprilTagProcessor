@@ -135,11 +135,28 @@ namespace OwlTagProcessor {
     }
 
     void TagProcessor::restart_to_next_loop(const boost::system::error_code &ec) {
-        if (ec && ec != boost::beast::error::timeout) {
-            // TODO
-            BOOST_LOG_TRIVIAL(error) << "restart_to_next_loop stop ec: " << ec;
-            timer_->cancel();
-            return;
+//        if (ec
+//            && ec != boost::beast::error::timeout
+//            && ec != boost::beast::http::error::end_of_stream
+//            && ec != boost::beast::http::error::end_of_chunk
+//            && ec != boost::beast::http::error::bad_content_length
+//            && ec != boost::beast::http::error::bad_line_ending
+//            && ec != boost::beast::http::error::bad_method
+//            && ec != boost::beast::http::error::bad_reason
+//            && ec != boost::beast::http::error::unexpected_body
+//            && ec != boost::asio::error::connection_refused
+//            && ec != boost::asio::error::connection_aborted
+//            && ec != boost::asio::error::connection_reset
+//                ) {
+//            BOOST_LOG_TRIVIAL(error) << "restart_to_next_loop stop ec: " << ec << " " << ec.what();
+//            timer_->cancel();
+//            return;
+//        }
+        if (ec) {
+            // ignore error, only log it
+            BOOST_LOG_TRIVIAL(error) << "restart_to_next_loop stop ec: " << ec << " " << ec.what();
+//            timer_->cancel();
+//            return;
         }
         BOOST_LOG_TRIVIAL(trace) << "restart_to_next_loop skip. ";
 
