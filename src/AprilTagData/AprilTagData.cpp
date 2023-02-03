@@ -158,15 +158,16 @@ namespace OwlAprilTagData {
         for (auto &a: o->tagInfo) {
             tagList.emplace_back(a.to_json_value());
         }
-        boost::json::value v{
+        boost::json::object v{
                 {"tagList", tagList},
         };
-        m->body = boost::json::serialize(v);
         if (o->center) {
-            m->params.insert({"center", boost::json::serialize(o->center->to_json_value())});
+            v.emplace("centerTag", o->center->to_json_value());
+//            m->params.insert({"center", boost::json::serialize(o->center->to_json_value())});
         } else {
 //            m->params.insert({"center", nullptr});
         }
+        m->body = boost::json::serialize(v);
         // m->params = decltype(m->params){
         //         decltype(m->params)::value_type{"center", boost::json::serialize((o->center.to_json_value())}
         // };
