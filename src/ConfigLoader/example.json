@@ -19,7 +19,7 @@
   "configSendResult": {
     "host": "192.168.137.152",
     "port": "23338",
-    "target": "/cmd",
+    "target": "/tagInfo",
     "version": 11,
     "timeoutMs": 1000
   }
