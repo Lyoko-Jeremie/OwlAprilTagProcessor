@@ -116,7 +116,6 @@ add_executable(${ProjectMainName}
         src/AprilTagData/AprilTagData.h
         src/OwlLog/OwlLog.cpp
         src/OwlLog/OwlLog.h
-        #        src/3thlib/cpp-httplib/httplib.h
         src/GetImage/GetImage.cpp
         src/GetImage/GetImage.h
         src/SendResult/SendResult.cpp

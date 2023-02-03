@@ -4,7 +4,6 @@
 
 #include "OwlLog/OwlLog.h"
 
-//#include "3thlib/cpp-httplib/httplib.h"
 
 #include <boost/asio.hpp>
 #include <boost/asio/signal_set.hpp>
