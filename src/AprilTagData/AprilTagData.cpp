@@ -119,7 +119,7 @@ namespace OwlAprilTagData {
 
             }
 
-            if (data_r->tagInfo.size() > 0) {
+            if (!data_r->tagInfo.empty()) {
                 // find center tag here
                 size_t miniIndex = 0;
                 double miniDistance = std::numeric_limits<double>::max();
