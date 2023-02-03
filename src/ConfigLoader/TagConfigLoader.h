@@ -44,6 +44,7 @@ namespace OwlTagConfigLoader {
     struct ConfigAprilTagData {
         int resizeWidth = 640;
         int resizeHeight = 480;
+        int aprilTagDetectorMaxHammingBitsCorrected = 1;
     };
 
     struct Config {
@@ -70,6 +71,8 @@ namespace OwlTagConfigLoader {
                 << "\n" << "ConfigAprilTagData :"
                 << "\n" << "\t resizeWidth " << config.configAprilTagData.resizeWidth
                 << "\n" << "\t resizeHeight " << config.configAprilTagData.resizeHeight
+                << "\n" << "\t aprilTagDetectorMaxHammingBitsCorrected "
+                << config.configAprilTagData.aprilTagDetectorMaxHammingBitsCorrected
                 << "\n" << "ConfigGetImage :"
                 << "\n" << "\t host " << config.configGetImage.host
                 << "\n" << "\t port " << config.configGetImage.port

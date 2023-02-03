@@ -31,7 +31,10 @@ namespace OwlAprilTagData {
                 : tagConfigLoader_(std::move(tagConfigLoader)) {
             td = apriltag_detector_create();
             tf = tagStandard41h12_create();
-            apriltag_detector_add_family(td, tf);
+            // bits_corrected : 1 use 1MB , 2 use 193MB, 3 use 1.3GB
+            apriltag_detector_add_family_bits(
+                    td, tf,
+                    tagConfigLoader_->config.configAprilTagData.aprilTagDetectorMaxHammingBitsCorrected);
         }
 
         std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> tagConfigLoader_;

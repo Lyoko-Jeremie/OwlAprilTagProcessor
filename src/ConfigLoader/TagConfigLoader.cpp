@@ -138,6 +138,10 @@ namespace OwlTagConfigLoader {
                                                          "resizeWidth", config_.configAprilTagData.resizeWidth);
             config_.configAprilTagData.resizeHeight = get(configAprilTagData,
                                                           "resizeHeight", config_.configAprilTagData.resizeHeight);
+            config_.configAprilTagData.aprilTagDetectorMaxHammingBitsCorrected =
+                    get(configAprilTagData,
+                        "aprilTagDetectorMaxHammingBitsCorrected",
+                        config_.configAprilTagData.aprilTagDetectorMaxHammingBitsCorrected);
         }
 
         if (root.contains("configGetImage")) {

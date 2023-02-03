@@ -6,7 +6,8 @@
   },
   "configAprilTagData": {
     "resizeWidth": 640,
-    "resizeHeight": 480
+    "resizeHeight": 480,
+    "aprilTagDetectorMaxHammingBitsCorrected": 1
   },
   "configGetImage": {
     "host": "192.168.137.152",
