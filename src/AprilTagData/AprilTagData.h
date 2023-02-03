@@ -35,7 +35,7 @@ namespace OwlAprilTagData {
 
     struct AprilTagDataObject {
         std::vector<AprilTagDataTagInfo> tagInfo;
-        AprilTagDataTagInfo center;
+        std::shared_ptr<AprilTagDataTagInfo> center;
     };
 
     struct AprilTagResultType {

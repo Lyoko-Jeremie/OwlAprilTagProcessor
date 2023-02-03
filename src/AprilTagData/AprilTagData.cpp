@@ -119,21 +119,24 @@ namespace OwlAprilTagData {
 
             }
 
-            // find center tag here
-            size_t miniIndex = 0;
-            double miniDistance = std::numeric_limits<double>::max();
-            double imageCenterX = image.cols / 2.;
-            double imageCenterY = image.rows / 1.;
-            for (size_t i = 0; i < data_r->tagInfo.size(); ++i) {
-                auto p = data_r->tagInfo.at(i);
-                double d = std::pow(p.centerX - imageCenterX, 2) + std::pow(p.centerY - imageCenterY, 2);
-                if (miniDistance > d) {
-                    miniDistance = d;
-                    miniIndex = i;
+            if (data_r->tagInfo.size() > 0) {
+                // find center tag here
+                size_t miniIndex = 0;
+                double miniDistance = std::numeric_limits<double>::max();
+                double imageCenterX = image.cols / 2.;
+                double imageCenterY = image.rows / 1.;
+                for (size_t i = 0; i < data_r->tagInfo.size(); ++i) {
+                    auto p = data_r->tagInfo.at(i);
+                    double d = std::pow(p.centerX - imageCenterX, 2) + std::pow(p.centerY - imageCenterY, 2);
+                    if (miniDistance > d) {
+                        miniDistance = d;
+                        miniIndex = i;
+                    }
                 }
+                data_r->center = std::make_shared<AprilTagDataTagInfo>(data_r->tagInfo.at(miniIndex));
+            } else {
+                data_r->center = nullptr;
             }
-            data_r->center = data_r->tagInfo.at(miniIndex);
-
 
             return data_r;
         }
@@ -159,7 +162,11 @@ namespace OwlAprilTagData {
                 {"tagList", tagList},
         };
         m->body = boost::json::serialize(v);
-        m->params.insert({"center", boost::json::serialize(o->center.to_json_value())});
+        if (o->center) {
+            m->params.insert({"center", boost::json::serialize(o->center->to_json_value())});
+        } else {
+//            m->params.insert({"center", nullptr});
+        }
         // m->params = decltype(m->params){
         //         decltype(m->params)::value_type{"center", boost::json::serialize((o->center.to_json_value())}
         // };
