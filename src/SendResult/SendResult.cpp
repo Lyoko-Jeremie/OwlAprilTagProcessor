@@ -50,7 +50,7 @@ namespace OwlSendResult {
                 method.params().set(a.first, a.second);
             }
 
-            BOOST_LOG_TRIVIAL(trace) << "method.buffer() : " << method.buffer();
+//            BOOST_LOG_TRIVIAL(trace) << "method.buffer() : " << method.buffer();
 
             // Set up an HTTP GET request message
             req_.version(version);
@@ -140,8 +140,8 @@ namespace OwlSendResult {
             stream_.expires_never();
 
             if (res_.result() == boost::beast::http::status::ok) {
-                // Write the message to standard out
-                BOOST_LOG_TRIVIAL(trace) << res_;
+//                // Write the message to standard out
+//                BOOST_LOG_TRIVIAL(trace) << res_;
                 if (callback_) {
                     callback_({}, true);
                 }
