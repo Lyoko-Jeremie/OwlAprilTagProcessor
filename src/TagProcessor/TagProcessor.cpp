@@ -4,6 +4,7 @@
 
 #include <utility>
 #include <atomic>
+#include <boost/circular_buffer.hpp>
 
 namespace OwlTagProcessor {
 
@@ -14,6 +15,8 @@ namespace OwlTagProcessor {
 
         double averageFps = 0;
         const double averageWindow = 10;
+
+        boost::circular_buffer<double> averageFpsBuffer{static_cast<size_t>(averageWindow), 0};
 
     public:
         explicit FpsTracer(
@@ -34,12 +37,16 @@ namespace OwlTagProcessor {
                 return;
             }
             auto f = count.exchange(0);
+            averageFpsBuffer.push_back(f);
+            double a10 = std::reduce(averageFpsBuffer.begin(), averageFpsBuffer.end()) / averageWindow;
 
             // avg = avg*((1-w)/w) + new*(1/w) = ((avg*(1-w) + new*(1)) / w
             averageFps = (averageFps * (averageWindow - 1) + double(f)) / averageWindow;
             BOOST_LOG_TRIVIAL(trace) << "Fps/1: " << f
-                                     << "\tFps/" << averageWindow << ": " << averageFps
-                                     << "\tms:" << (1000.0 / averageFps);
+                                     << "\tFps/arg/" << averageWindow << ": " << averageFps
+                                     << "\tms:" << (1000.0 / averageFps)
+                                     << "\tFps/" << averageWindow << ": " << a10
+                                     << "\tms:" << (1000.0 / a10);
 
             timer_.expires_at(timer_.expiry() + boost::asio::chrono::seconds(1));
             timer_.async_wait([this](const boost::system::error_code &ec) { flushFps(ec); });
