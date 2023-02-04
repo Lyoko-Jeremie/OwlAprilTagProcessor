@@ -16,6 +16,8 @@
 
 namespace OwlTagProcessor {
 
+    class FpsTracer;
+
     class TagProcessor : public std::enable_shared_from_this<TagProcessor> {
     public:
         TagProcessor(
@@ -24,15 +26,7 @@ namespace OwlTagProcessor {
                 std::shared_ptr<OwlSendResult::SendResult> ptr_SendResult,
                 std::shared_ptr<OwlAprilTagData::AprilTagData> ptr_AprilTagData,
                 std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> TagConfigLoader
-        ) : ioc_(ioc),
-            ptr_GetImage_(std::move(ptr_GetImage)),
-            ptr_SendResult_(std::move(ptr_SendResult)),
-            ptr_AprilTagData_(std::move(ptr_AprilTagData)),
-            ptr_TagConfigLoader_(std::move(TagConfigLoader)),
-            timeStartMs_(ptr_TagConfigLoader_->config.configTagProcessor.timeStartMs),
-            timeDurationMs_(ptr_TagConfigLoader_->config.configTagProcessor.timeDurationMs),
-            timeoutCountLimit_(ptr_TagConfigLoader_->config.configTagProcessor.timeoutCountLimit) {
-        }
+        );
 
     private:
         boost::asio::io_context &ioc_;
@@ -51,6 +45,7 @@ namespace OwlTagProcessor {
         size_t timeoutCount_ = 0;
         const size_t timeoutCountLimit_ = 6;
 
+        std::shared_ptr<FpsTracer> fpsTracer;
     public:
         void start();
 

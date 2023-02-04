@@ -3,9 +3,49 @@
 #include "TagProcessor.h"
 
 #include <utility>
-
+#include <atomic>
 
 namespace OwlTagProcessor {
+
+    class FpsTracer : std::enable_shared_from_this<FpsTracer> {
+        std::atomic_int count{0};
+        boost::asio::io_context &ioc_;
+        boost::asio::steady_timer timer_;
+
+        double averageFps = 0;
+        const double averageWindow = 10;
+
+    public:
+        explicit FpsTracer(
+                boost::asio::io_context &ioc
+        ) : ioc_(ioc),
+            timer_(ioc_, boost::asio::chrono::seconds(1)) {
+            timer_.async_wait([this](const boost::system::error_code &ec) { flushFps(ec); });
+            BOOST_LOG_TRIVIAL(trace) << "FpsTracer averageWindow:" << averageWindow;
+        }
+
+        void frame() {
+            ++count;
+        }
+
+        void flushFps(const boost::system::error_code &ec) {
+            if (ec) {
+                BOOST_LOG_TRIVIAL(error) << "FpsTracer flushFps ec: " << ec << ec.what();
+                return;
+            }
+            auto f = count.exchange(0);
+
+            // avg = avg*((1-w)/w) + new*(1/w) = ((avg*(1-w) + new*(1)) / w
+            averageFps = (averageFps * (averageWindow - 1) + double(f)) / averageWindow;
+            BOOST_LOG_TRIVIAL(trace) << "Fps/1: " << f
+                                     << "\tFps/" << averageWindow << ": " << averageFps
+                                     << "\tms:" << (1000.0 / averageFps);
+
+            timer_.expires_at(timer_.expiry() + boost::asio::chrono::seconds(1));
+            timer_.async_wait([this](const boost::system::error_code &ec) { flushFps(ec); });
+        }
+
+    };
 
     void TagProcessor::start() {
         if (timer_) {
@@ -23,7 +63,7 @@ namespace OwlTagProcessor {
 
     void TagProcessor::to_get_image(const boost::system::error_code &ec) {
         if (ec) {
-            BOOST_LOG_TRIVIAL(error) << "TagProcessor to_get_image ec: " << ec;
+            BOOST_LOG_TRIVIAL(error) << "TagProcessor to_get_image ec: " << ec << ec.what();
             // ignore
             return;
         }
@@ -112,6 +152,7 @@ namespace OwlTagProcessor {
                         }
                         timeoutCount_ = 0;
 
+                        fpsTracer->frame();
                         next_loop();
 
                     });
@@ -183,6 +224,21 @@ namespace OwlTagProcessor {
                     to_get_image(ec);
                 }
         );
+    }
+
+    TagProcessor::TagProcessor(boost::asio::io_context &ioc, std::shared_ptr<OwlGetImage::GetImage> ptr_GetImage,
+                               std::shared_ptr<OwlSendResult::SendResult> ptr_SendResult,
+                               std::shared_ptr<OwlAprilTagData::AprilTagData> ptr_AprilTagData,
+                               std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> TagConfigLoader)
+            : ioc_(ioc),
+              ptr_GetImage_(std::move(ptr_GetImage)),
+              ptr_SendResult_(std::move(ptr_SendResult)),
+              ptr_AprilTagData_(std::move(ptr_AprilTagData)),
+              ptr_TagConfigLoader_(std::move(TagConfigLoader)),
+              timeStartMs_(ptr_TagConfigLoader_->config.configTagProcessor.timeStartMs),
+              timeDurationMs_(ptr_TagConfigLoader_->config.configTagProcessor.timeDurationMs),
+              timeoutCountLimit_(ptr_TagConfigLoader_->config.configTagProcessor.timeoutCountLimit),
+              fpsTracer(std::make_shared<FpsTracer>(ioc_)) {
     }
 
 } // OwlTagProcessor
