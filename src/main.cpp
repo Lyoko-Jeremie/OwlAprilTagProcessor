@@ -8,7 +8,6 @@
 #include <boost/asio.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/thread.hpp>
-#include <boost/beast.hpp>
 #include <boost/program_options.hpp>
 
 #include "AprilTagData/AprilTagData.h"
