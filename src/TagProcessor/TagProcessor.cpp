@@ -165,7 +165,8 @@ namespace OwlTagProcessor {
 
         // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
         // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
-        timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
+        // timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
+        setNextDuration(boost::asio::chrono::milliseconds(timeDurationMs_));
 
         timer_->async_wait(
                 [this, self = shared_from_this()]
@@ -203,7 +204,8 @@ namespace OwlTagProcessor {
 
         // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
         // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
-        timer_->expires_from_now(boost::asio::chrono::milliseconds(timeStartMs_));
+        // timer_->expires_from_now(boost::asio::chrono::milliseconds(timeStartMs_));
+        setNextDuration(boost::asio::chrono::milliseconds(timeDurationMs_));
 
         timer_->async_wait(
                 [this, self = shared_from_this()]
@@ -216,7 +218,8 @@ namespace OwlTagProcessor {
     void TagProcessor::next_loop() {
         // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
         // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
-        timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
+        // timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
+        setNextDuration(boost::asio::chrono::milliseconds(timeDurationMs_));
 
         timer_->async_wait(
                 [this, self = shared_from_this()]

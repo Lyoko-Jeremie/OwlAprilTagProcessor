@@ -63,6 +63,30 @@ namespace OwlTagProcessor {
 
         void next_loop();
 
+        void setNextDuration(
+                boost::asio::chrono::milliseconds requestDuration
+        ) {
+            // https://www.boost.org/doc/libs/1_81_0/doc/html/boost_asio/tutorial/tuttimer3.html
+            // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
+            // timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
+
+            if (timer_->expiry() + requestDuration > boost::asio::chrono::steady_clock::now()) {
+                // timer_->expires_after(timer_->expiry() + requestDuration - boost::asio::chrono::steady_clock::now());
+                timer_->expires_from_now(timer_->expiry() + requestDuration - boost::asio::chrono::steady_clock::now());
+            } else {
+                // timer_->expires_after(
+                //         boost::asio::chrono::milliseconds(
+                //                 ptr_TagConfigLoader_->config.configTagProcessor.timeDurationMini
+                //         )
+                // );
+                timer_->expires_from_now(
+                        boost::asio::chrono::milliseconds(
+                                ptr_TagConfigLoader_->config.configTagProcessor.timeDurationMini
+                        )
+                );
+            }
+        }
+
     };
 
 } // OwlTagProcessor

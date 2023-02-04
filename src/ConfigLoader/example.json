@@ -2,7 +2,8 @@
   "configTagProcessor": {
     "timeStartMs": 1000,
     "timeDurationMs": 300,
-    "timeoutCountLimit": 6
+    "timeoutCountLimit": 6,
+    "timeDurationMini": 30
   },
   "configAprilTagData": {
     "resizeWidth": 640,

@@ -39,6 +39,7 @@ namespace OwlTagConfigLoader {
         long timeStartMs = 1 * 1000;
         long timeDurationMs = 300;
         long timeoutCountLimit = 6;
+        long timeDurationMini = 30;
     };
 
     struct ConfigAprilTagData {
@@ -68,6 +69,7 @@ namespace OwlTagConfigLoader {
                 << "\n" << "\t timeStartMs " << config.configTagProcessor.timeStartMs
                 << "\n" << "\t timeDurationMs " << config.configTagProcessor.timeDurationMs
                 << "\n" << "\t timeoutCountLimit " << config.configTagProcessor.timeoutCountLimit
+                << "\n" << "\t timeDurationMini " << config.configTagProcessor.timeDurationMini
                 << "\n" << "ConfigAprilTagData :"
                 << "\n" << "\t resizeWidth " << config.configAprilTagData.resizeWidth
                 << "\n" << "\t resizeHeight " << config.configAprilTagData.resizeHeight

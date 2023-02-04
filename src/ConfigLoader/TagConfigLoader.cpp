@@ -130,6 +130,9 @@ namespace OwlTagConfigLoader {
             config_.configTagProcessor.timeoutCountLimit = get(configTagProcessor,
                                                                "timeoutCountLimit",
                                                                config_.configTagProcessor.timeoutCountLimit);
+            config_.configTagProcessor.timeDurationMini = get(configTagProcessor,
+                                                               "timeDurationMini",
+                                                               config_.configTagProcessor.timeDurationMini);
         }
 
         if (root.contains("configAprilTagData")) {
