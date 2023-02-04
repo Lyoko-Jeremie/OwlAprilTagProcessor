@@ -18,6 +18,9 @@ namespace OwlTagProcessor {
 
         boost::circular_buffer<double> averageFpsBuffer{static_cast<size_t>(averageWindow), 0};
 
+        boost::circular_buffer<double> averageWastBuffer{static_cast<size_t>(averageWindow), 0};
+        std::mutex mtxAverageWastBuffer;
+
     public:
         explicit FpsTracer(
                 boost::asio::io_context &ioc
@@ -27,8 +30,10 @@ namespace OwlTagProcessor {
             BOOST_LOG_TRIVIAL(trace) << "FpsTracer averageWindow:" << averageWindow;
         }
 
-        void frame() {
+        void frame(boost::asio::chrono::milliseconds wastMs) {
             ++count;
+            std::lock_guard lg{mtxAverageWastBuffer};
+            averageWastBuffer.push_back(static_cast<double>(wastMs.count()));
         }
 
         void flushFps(const boost::system::error_code &ec) {
@@ -40,13 +45,16 @@ namespace OwlTagProcessor {
             averageFpsBuffer.push_back(f);
             double a10 = std::reduce(averageFpsBuffer.begin(), averageFpsBuffer.end()) / averageWindow;
 
+            double w0 = std::reduce(averageWastBuffer.begin(), averageWastBuffer.end()) / averageWindow;
+
             // avg = avg*((1-w)/w) + new*(1/w) = ((avg*(1-w) + new*(1)) / w
             averageFps = (averageFps * (averageWindow - 1) + double(f)) / averageWindow;
             BOOST_LOG_TRIVIAL(trace) << "Fps/1: " << f
                                      << "\tFps/arg/" << averageWindow << ": " << averageFps
                                      << "\tms:" << (1000.0 / averageFps)
                                      << "\tFps/" << averageWindow << ": " << a10
-                                     << "\tms:" << (1000.0 / a10);
+                                     << "\tms:" << (1000.0 / a10)
+                                     << "\tms/w/" << averageWindow << ": " << w0;
 
             timer_.expires_at(timer_.expiry() + boost::asio::chrono::seconds(1));
             timer_.async_wait([this](const boost::system::error_code &ec) { flushFps(ec); });
@@ -121,7 +129,7 @@ namespace OwlTagProcessor {
     }
 
     void TagProcessor::to_analysis_april_tag(cv::Mat img) {
-        auto r = ptr_AprilTagData_->analysis(img);
+        auto r = ptr_AprilTagData_->analysis(std::move(img));
         auto o = AprilTagDataObject2ResultType(r);
 
         to_send_result(std::move(o));
@@ -159,7 +167,6 @@ namespace OwlTagProcessor {
                         }
                         timeoutCount_ = 0;
 
-                        fpsTracer->frame();
                         next_loop();
 
                     });
@@ -256,6 +263,11 @@ namespace OwlTagProcessor {
         // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
         // timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
 
+        fpsTracer->frame(
+                boost::asio::chrono::duration_cast<boost::asio::chrono::milliseconds>(
+                        boost::asio::chrono::steady_clock::now() - timer_->expiry()
+                )
+        );
         if (timer_->expiry() + requestDuration > boost::asio::chrono::steady_clock::now()) {
             // timer_->expires_after(timer_->expiry() + requestDuration - boost::asio::chrono::steady_clock::now());
             timer_->expires_from_now(timer_->expiry() + requestDuration - boost::asio::chrono::steady_clock::now());
