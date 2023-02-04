@@ -40,7 +40,7 @@ namespace OwlAprilTagData {
 
     struct AprilTagResultType {
         std::map<std::string, std::string> params;
-        boost::json::value body;
+        std::string body;
     };
 
     auto AprilTagDataObject2ResultType(std::shared_ptr<AprilTagDataObject> o) -> std::shared_ptr<AprilTagResultType>;

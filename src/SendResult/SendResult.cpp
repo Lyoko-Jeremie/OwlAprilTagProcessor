@@ -59,7 +59,7 @@ namespace OwlSendResult {
             req_.set(boost::beast::http::field::host, host);
             req_.set(boost::beast::http::field::content_type, "text/json");
             req_.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-            req_.body() = boost::json::serialize(data->body);
+            req_.body() = data->body;
             req_.prepare_payload();
 
             // Look up the domain name
