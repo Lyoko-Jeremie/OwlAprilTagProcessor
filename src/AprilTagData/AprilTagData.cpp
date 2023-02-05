@@ -125,6 +125,15 @@ namespace OwlAprilTagData {
                     }
                 }
                 data_r->center = std::make_shared<AprilTagDataTagInfo>(data_r->tagInfo.at(miniIndex));
+                BOOST_LOG_TRIVIAL(trace)
+                    << "centerTag : "
+                    << " id " << data_r->center->id
+                    << " c[0]x " << data_r->center->centerX
+                    << " c[1]y " << data_r->center->centerY
+                    << " p[0] (" << data_r->center->cornerLTx << "," << data_r->center->cornerLTy << ")"
+                    << " p[1] (" << data_r->center->cornerRTx << "," << data_r->center->cornerRTy << ")"
+                    << " p[2] (" << data_r->center->cornerRBx << "," << data_r->center->cornerRBy << ")"
+                    << " p[3] (" << data_r->center->cornerLBx << "," << data_r->center->cornerLBy << ")";
             } else {
                 data_r->center = nullptr;
             }
