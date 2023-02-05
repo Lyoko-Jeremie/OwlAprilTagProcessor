@@ -263,11 +263,13 @@ namespace OwlTagProcessor {
         // timer_.expires_at(timer_.expiry() + boost::asio::chrono::milliseconds(msTimer_));
         // timer_->expires_from_now(boost::asio::chrono::milliseconds(timeDurationMs_));
 
-        fpsTracer->frame(
-                boost::asio::chrono::duration_cast<boost::asio::chrono::milliseconds>(
-                        boost::asio::chrono::steady_clock::now() - timer_->expiry()
-                )
-        );
+        if (fpsTracer) {
+            fpsTracer->frame(
+                    boost::asio::chrono::duration_cast<boost::asio::chrono::milliseconds>(
+                            boost::asio::chrono::steady_clock::now() - timer_->expiry()
+                    )
+            );
+        }
         if (timer_->expiry() + requestDuration > boost::asio::chrono::steady_clock::now()) {
             // timer_->expires_after(timer_->expiry() + requestDuration - boost::asio::chrono::steady_clock::now());
             timer_->expires_from_now(timer_->expiry() + requestDuration - boost::asio::chrono::steady_clock::now());
