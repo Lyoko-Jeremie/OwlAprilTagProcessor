@@ -45,9 +45,11 @@ namespace OwlAprilTagData {
 
         auto analysis(cv::Mat image) -> std::shared_ptr<AprilTagDataObject> {
 
-//            if (image.channels() > 1) {
-//                cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
-//            }
+            auto data_r = std::make_shared<AprilTagDataObject>();
+
+            if (image.channels() > 1) {
+                cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
+            }
             if (image.cols > tagConfigLoader_->config.configAprilTagData.resizeWidth
                 || image.rows > tagConfigLoader_->config.configAprilTagData.resizeHeight) {
                 cv::resize(image, image, cv::Size{
@@ -56,15 +58,19 @@ namespace OwlAprilTagData {
                 }, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
             }
 
+
             std::vector<int> markerIds;
             std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
-            detector_.detectMarkers(image, markerCorners, markerIds, rejectedCandidates);
+//            detector_.detectMarkers(image, markerCorners, markerIds, rejectedCandidates);
+            detector_.detectMarkers(image, markerCorners, markerIds);
+
+//            return data_r;
 
 //            BOOST_LOG_TRIVIAL(trace) << "markerIds.size():" << markerIds.size();
 //            BOOST_LOG_TRIVIAL(trace) << "markerCorners.size():" << markerCorners.size();
 //            BOOST_LOG_TRIVIAL(trace) << "rejectedCandidates.size():" << rejectedCandidates.size();
 
-            auto data_r = std::make_shared<AprilTagDataObject>();
+
             data_r->tagInfo.reserve(markerIds.size());
 
 
