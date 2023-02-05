@@ -66,6 +66,121 @@ extern "C" {
 #include "common/getopt.h"
 }
 
+#include <opencv2/aruco.hpp>
+
+int main2(int argc, const char *argv[]) {
+    std::cout << "Hello, World!" << std::endl;
+    OwlLog::threadName = "main";
+    OwlLog::init_logging();
+
+    auto image = cv::imread("/home/jeremie/1.jpg");
+//    auto image = cv::imread("/home/jeremie/Apriltag/tag36h11_1.png");
+
+    if (image.empty()) {
+        std::cout << "(image.empty())" << std::endl;
+        return 0;
+    }
+
+    BOOST_LOG_TRIVIAL(trace) << "image:"
+                             << " cols " << image.cols
+                             << " rows " << image.rows
+                             << " channels " << image.channels();
+    if (image.channels() > 1) {
+        cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
+    }
+    cv::resize(image, image, cv::Size{640, 480}, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+    BOOST_LOG_TRIVIAL(trace) << "image:"
+                             << " cols " << image.cols
+                             << " rows " << image.rows
+                             << " channels " << image.channels();
+
+    std::vector<int> markerIds;
+    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+    cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+    detector.detectMarkers(image, markerCorners, markerIds, rejectedCandidates);
+
+    BOOST_LOG_TRIVIAL(trace) << "markerIds.size():" << markerIds.size();
+    BOOST_LOG_TRIVIAL(trace) << "markerCorners.size():" << markerCorners.size();
+    BOOST_LOG_TRIVIAL(trace) << "rejectedCandidates.size():" << rejectedCandidates.size();
+
+
+}
+
+int main1(int argc, const char *argv[]) {
+    std::cout << "Hello, World!" << std::endl;
+    OwlLog::threadName = "main";
+    OwlLog::init_logging();
+
+//    image_u8_t *im = image_u8_create_from_pnm("../1.jpg");
+//
+//    if (!im) {
+//        std::cout << "(!im)" << std::endl;
+//        return 0;
+//    }
+
+    auto image = cv::imread("/home/jeremie/1.jpg");
+//    auto image = cv::imread("/home/jeremie/Apriltag/tag36h11_1.png");
+
+    if (image.empty()) {
+        std::cout << "(image.empty())" << std::endl;
+        return 0;
+    }
+
+    BOOST_LOG_TRIVIAL(trace) << "image:"
+                             << " cols " << image.cols
+                             << " rows " << image.rows
+                             << " channels " << image.channels();
+    if (image.channels() > 1) {
+        cv::cvtColor(image, image, cv::ColorConversionCodes::COLOR_BGR2GRAY);
+    }
+    cv::resize(image, image, cv::Size{640, 480}, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+
+    image_u8_t im = {.width = image.cols,
+            .height = image.rows,
+            .stride = image.cols,
+            .buf = image.data
+    };
+
+    BOOST_LOG_TRIVIAL(trace) << "image:"
+                             << " cols " << im.width
+                             << " rows " << im.height
+                             << " stride " << im.stride;
+
+    apriltag_detector_t *td = apriltag_detector_create();
+    apriltag_family_t *tf = tagStandard41h12_create();
+    apriltag_detector_add_family(td, tf);
+    zarray_t *detections = apriltag_detector_detect(td, &im);
+
+
+    BOOST_LOG_TRIVIAL(trace) << "zarray_size(detections):" << zarray_size(detections);
+
+    for (int i = 0; i < zarray_size(detections); i++) {
+        apriltag_detection_t *det;
+        zarray_get(detections, i, &det);
+
+        // TODO Do stuff with detections here.
+        BOOST_LOG_TRIVIAL(trace)
+            << "calcTag : " << i
+            << " id " << det->id
+            << " c[0]x " << det->c[0]
+            << " c[1]y " << det->c[1]
+            << " p[0] (" << det->p[0][0] << "," << det->p[0][0] << ")"
+            << " p[1] (" << det->p[1][0] << "," << det->p[1][0] << ")"
+            << " p[2] (" << det->p[2][0] << "," << det->p[2][0] << ")"
+            << " p[3] (" << det->p[3][0] << "," << det->p[3][0] << ")"
+            << " hamming " << det->hamming
+            << " decision_margin " << det->decision_margin;
+
+        // Do stuff with detections here.
+    }
+    // Cleanup.
+    tagStandard41h12_destroy(tf);
+    apriltag_detector_destroy(td);
+
+}
+
 int main(int argc, const char *argv[]) {
     std::cout << "Hello, World!" << std::endl;
     OwlLog::threadName = "main";

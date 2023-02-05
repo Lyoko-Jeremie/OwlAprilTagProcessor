@@ -10,7 +10,10 @@
 
 namespace OwlAprilTagData {
 
-    struct AprilTagDataImpl;
+    struct AprilTagDataOriginImpl;
+    struct AprilTagDataOpenCVImpl;
+
+    using AprilTagDataImpl = AprilTagDataOpenCVImpl;
 
     struct AprilTagDataTagInfo {
         // from :
