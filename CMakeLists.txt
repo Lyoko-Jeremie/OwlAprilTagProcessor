@@ -55,6 +55,10 @@ if (DEBUG_BOOST_ASIO)
     add_definitions(-DBOOST_ASIO_ENABLE_HANDLER_TRACKING)
 endif (DEBUG_BOOST_ASIO)
 
+if (USE_AprilTagDataOpenCVImpl)
+    add_definitions(-DUSE_AprilTagDataOpenCVImpl)
+endif (USE_AprilTagDataOpenCVImpl)
+
 option(USE_DYNAMIC_BOOST "Config USE_DYNAMIC_BOOST")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")

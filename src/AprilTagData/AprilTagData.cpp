@@ -7,8 +7,10 @@
 #include <cmath>
 #include <limits>
 
-#include <opencv2/aruco.hpp>
 
+#ifdef USE_AprilTagDataOpenCVImpl
+#include <opencv2/aruco.hpp>
+#else
 extern "C" {
 #include "apriltag.h"
 #include "tag36h11.h"
@@ -21,6 +23,8 @@ extern "C" {
 #include "tagStandard52h13.h"
 #include "common/getopt.h"
 }
+#endif // USE_AprilTagDataOpenCVImpl
+
 
 namespace OwlAprilTagData {
 
@@ -28,6 +32,7 @@ namespace OwlAprilTagData {
             const std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> &tagConfigLoader
     ) : impl(std::make_shared<AprilTagDataImpl>(tagConfigLoader)) {}
 
+#ifdef USE_AprilTagDataOpenCVImpl
     struct AprilTagDataOpenCVImpl : public std::enable_shared_from_this<AprilTagDataImpl> {
         explicit AprilTagDataOpenCVImpl(std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> tagConfigLoader)
                 : tagConfigLoader_(std::move(tagConfigLoader)),
@@ -147,6 +152,7 @@ namespace OwlAprilTagData {
             return data_r;
         }
     };
+#else
 
     struct AprilTagDataOriginImpl : public std::enable_shared_from_this<AprilTagDataImpl> {
         explicit AprilTagDataOriginImpl(std::shared_ptr<OwlTagConfigLoader::TagConfigLoader> tagConfigLoader)
@@ -274,6 +280,8 @@ namespace OwlAprilTagData {
         apriltag_detector_t *td;
         apriltag_family_t *tf;
     };
+
+#endif // USE_AprilTagDataOpenCVImpl
 
     auto AprilTagDataObject2ResultType(std::shared_ptr<AprilTagDataObject> o)
     -> std::shared_ptr<AprilTagResultType> {

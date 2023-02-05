@@ -10,11 +10,15 @@
 
 namespace OwlAprilTagData {
 
-    struct AprilTagDataOriginImpl;
-    struct AprilTagDataOpenCVImpl;
 
+#ifdef USE_AprilTagDataOpenCVImpl
+    struct AprilTagDataOpenCVImpl;
+    using AprilTagDataImpl = AprilTagDataOpenCVImpl;
+#else
+    struct AprilTagDataOriginImpl;
     using AprilTagDataImpl = AprilTagDataOriginImpl;
-//    using AprilTagDataImpl = AprilTagDataOpenCVImpl;
+#endif // USE_AprilTagDataOpenCVImpl
+
 
     struct AprilTagDataTagInfo {
         // from :
