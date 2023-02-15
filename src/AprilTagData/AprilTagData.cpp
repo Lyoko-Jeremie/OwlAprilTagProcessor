@@ -125,11 +125,11 @@ namespace OwlAprilTagData {
                 // find center tag here
                 size_t miniIndex = 0;
                 double miniDistance = std::numeric_limits<double>::max();
-                double imageCenterX = image.cols / 2.;
-                double imageCenterY = image.rows / 1.;
+                double imageX = image.cols / 2.;
+                double imageY = image.rows / 1.;
                 for (size_t i = 0; i < data_r->tagInfo.size(); ++i) {
                     auto p = data_r->tagInfo.at(i);
-                    double d = std::pow(p.centerX - imageCenterX, 2) + std::pow(p.centerY - imageCenterY, 2);
+                    double d = std::pow(p.centerX - imageX, 2) + std::pow(p.centerY - imageY, 2);
                     if (miniDistance > d) {
                         miniDistance = d;
                         miniIndex = i;
@@ -207,8 +207,8 @@ namespace OwlAprilTagData {
 
             auto data_r = std::make_shared<AprilTagDataObject>();
 
-            data_r->imageCenterX = image.cols;
-            data_r->imageCenterY = image.rows;
+            data_r->imageX = image.cols;
+            data_r->imageY = image.rows;
 
             data_r->tagInfo.reserve(zarray_size(detections));
 
@@ -296,8 +296,8 @@ namespace OwlAprilTagData {
         }
         boost::json::object v{
                 {"tagList",      tagList},
-                {"imageCenterX", o->imageCenterX},
-                {"imageCenterY", o->imageCenterY},
+                {"imageX", o->imageX},
+                {"imageY", o->imageY},
         };
         if (o->center) {
             v.emplace("centerTag", o->center->to_json_value());
