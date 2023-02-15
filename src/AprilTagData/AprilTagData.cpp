@@ -206,6 +206,10 @@ namespace OwlAprilTagData {
             zarray_t *detections = apriltag_detector_detect(td, &img_header);
 
             auto data_r = std::make_shared<AprilTagDataObject>();
+
+            data_r->imageCenterX = image.cols;
+            data_r->imageCenterY = image.rows;
+
             data_r->tagInfo.reserve(zarray_size(detections));
 
             for (int i = 0; i < zarray_size(detections); i++) {
@@ -291,7 +295,9 @@ namespace OwlAprilTagData {
             tagList.emplace_back(a.to_json_value());
         }
         boost::json::object v{
-                {"tagList", tagList},
+                {"tagList",      tagList},
+                {"imageCenterX", o->imageCenterX},
+                {"imageCenterY", o->imageCenterY},
         };
         if (o->center) {
             v.emplace("centerTag", o->center->to_json_value());
