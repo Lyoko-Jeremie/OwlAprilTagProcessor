@@ -13,7 +13,7 @@
   "configGetImage": {
     "host": "192.168.137.152",
     "port": "23331",
-    "target": "/1",
+    "target": "/down?tag=1",
     "version": 11,
     "timeoutMs": 1000
   },
